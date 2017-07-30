@@ -18,7 +18,7 @@ class App extends Main {
 
         foreach ($a as $value) {
             if ($value != '.' && $value != '..') {
-                $data['project'][] = $value;
+                // $data['project'][] = $value;
                 $b = load_file('project/' . $value);
                 if (in_array('controllers', $b)) {
                     $b = load_recursive('project/' . $value . '/controllers');
