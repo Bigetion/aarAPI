@@ -45,10 +45,10 @@ class App extends Main {
 			if($this->db->update("users", $data, ["id_user"=>$post_data['idUser']])){
 				$this->set->success_message(true);
 			}else{
-				$this->set->error_message('Ubah password gagal');
+				$this->set->error_message(false);
 			}
 		}else{
-            $this->set->error_message('Username atau password salah');
+            $this->set->error_message(false);
         }        
     }
     

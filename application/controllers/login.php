@@ -8,13 +8,13 @@ class Login extends Main {
         $password = $json_data['password'];
 
         if (empty($user)|| empty($password))
-            $this->set->error_message("Username atau password harus diisi.!");
+            $this->set->error_message(false);
             
         $data = $this->db->select("users","*",["username"=>$user]);
         if (count($data) == 0)
-            $this->set->error_message('Username dan Password salah..!');
+            $this->set->error_message(true);
         else {
-            if(!password_verify($password,$data[0]["password"])) $this->set->error_message("Username dan password tidak cocok.!");
+            if(!password_verify($password,$data[0]["password"])) $this->set->error_message(false);
             else{
                 try{
                     $payload = array(
