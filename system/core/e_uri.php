@@ -40,6 +40,28 @@ class URI {
 		if ($nomor > count($data) - 1) return "";
 		else return str_replace($ext, '', $data[$nomor]);		
 	}
+
+	function subsegment($from=-1, $to=0){
+		$uri_base = explode('?', $_SERVER['REQUEST_URI']);
+		$uri_link = explode('/',$uri_base[0]);
+		$count =  count($uri_link);
+		$segment = '';
+
+		if($from<0 || $from>$count){
+			$segment = $uri_link[$count-1];
+		}else if($from==$to) {
+			$segment = $this->segment($from);
+		}else if($count>=$to){
+			if($to==0) $to = $count;
+			if($to<0) $to = $count + $to;
+			for($i=$from;$i<$to;$i++){
+				$segment .= $uri_link[$i].'/';
+			}
+			$segment = substr($segment, 0, -1);
+		}
+
+		return $segment;
+	}
 }
 
 ?>
