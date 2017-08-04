@@ -49,7 +49,7 @@ class image extends Main {
                 $path_info = pathinfo($image);
                 $basename = $path_info['basename'];
                 $filename = $path_info['filename'];
-                if($filename == $id_image){
+                if($filename == $id_image || $basename == $id_image){
                     $fileOut = $image;
                 }
             }
