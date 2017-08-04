@@ -107,11 +107,8 @@ class Project {
     }
 
     function render() {
-        $this->set_user();
-		// Jika meload base url saja 
+		$this->set_user();
         if (empty($this->project) && empty($this->controller)) {
-            // $this->set_user();
-
             if (!$this->is_exist_project(default_project)) 
 				show_error('Page not found', 'Project ' . default_project . ' was not found');
 				
@@ -137,7 +134,6 @@ class Project {
 					$this->controller = $this->project;
 				}
 			}elseif($this->is_exist_project($this->project)){
-                // $this->set_user();
 
 				if ($this->is_exist_project_controller(default_project,default_project_controller))
 					require_once('project/' . default_project . '/controllers/' . default_project_controller . '.php');

@@ -9,6 +9,31 @@ class Render {
         }
     }
 
+    function image($data) {
+        $header_with_payload = get_header('Access-Control-Request-Method');
+        if(!$header_with_payload){
+            if (file_exists($data)) {
+                $imageInfo = getimagesize($data);
+                switch ($imageInfo[2]) {
+                    case IMAGETYPE_JPEG:
+                        header("Content-Type: image/jpeg");
+                        break;
+                    case IMAGETYPE_GIF:
+                        header("Content-Type: image/gif");
+                        break;
+                    case IMAGETYPE_PNG:
+                        header("Content-Type: image/png");
+                        break;
+                    default:
+                        break;
+                }
+                header('Content-Length: ' . filesize($data));
+                readfile($data);
+                exit();
+            }
+        }
+    }
+
 	function json_post(){
 		return json_decode(file_get_contents('php://input'), true);
 	}
