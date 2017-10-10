@@ -229,7 +229,7 @@ class DB
 			}
 		}
 		catch (PDOException $e) {
-			throw new Exception($e->getMessage());
+			show_error('Database connection error','Cannot connect to database '.$options['database_name']);
 		}
 	}
 
