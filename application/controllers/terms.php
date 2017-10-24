@@ -27,8 +27,12 @@ class Terms extends Main {
     function submitAdd(){
         $post_data = $this->render->json_post();
         $type = 'category';
+        $description = '-';
         if(isset($post_data['type'])){
             $type = $post_data['type'];
+        }
+        if(isset($post_data['description'])){
+            $description = $post_data['description'];
         }
         $data = array(
             'name'  => $post_data['name'],
@@ -39,11 +43,12 @@ class Terms extends Main {
             $data_taxonomy = array(
                 'term_id'       => $id,
                 'taxonomy'      => $type,
-                'description'  => $post_data['description']
+                'description'   => $description
             );
             $this->db->insert("blog_taxonomy", $data_taxonomy);
             $this->set->success_message(true);
         }
+        $this->set->error_message(true);
     }
 
     function submitEdit(){
@@ -65,7 +70,7 @@ class Terms extends Main {
             $this->db->update("blog_taxonomy", $data_taxonomy, ["term_taxonomy_id"=>$taxonomy_id]);
             $this->set->success_message(true);
         }
-        $this->set->error_message(true, $this->db->log());
+        $this->set->error_message(true);
     }
 
     function submitDelete(){
@@ -80,6 +85,7 @@ class Terms extends Main {
             $this->db->delete("blog_taxonomy", ["term_taxonomy_id"=>$taxonomy_id]);
             $this->set->success_message(true);
         }
+        $this->set->error_message(true);
     }
 }    
 ?>
