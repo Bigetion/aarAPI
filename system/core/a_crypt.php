@@ -113,16 +113,18 @@ class Crypt {
 		$result = "";
 		for($i=0;$i<(count($arr_tmp_result_char)/2);$i++){
 			$j = $i*2;
-					
-			$c1 = $arr_tmp_result_char[$arr_acm[$j]];
-			$c2 = $arr_tmp_result_char[$arr_acm[$j+1]];
 			
-			$r = ($c1-$arr_key[$i%count($arr_key)])-($c2-(2*$arr_key[$i%count($arr_key)]));
-			if($r<0) $r+=127;
-			else if($r>127) $r-=127;
-			
-			$arr_result2[] = $r;
-			$result .= chr($r);
+			if(isset($arr_acm[$j+1]) && isset($arr_acm[$j])){
+				$c1 = $arr_tmp_result_char[$arr_acm[$j]];
+				$c2 = $arr_tmp_result_char[$arr_acm[$j+1]];
+				
+				$r = ($c1-$arr_key[$i%count($arr_key)])-($c2-(2*$arr_key[$i%count($arr_key)]));
+				if($r<0) $r+=127;
+				else if($r>127) $r-=127;
+				
+				$arr_result2[] = $r;
+				$result .= chr($r);
+			}
 		}
 		
 		return trim($result);

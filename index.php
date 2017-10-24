@@ -18,7 +18,7 @@ function load_recursive($nama_folder, $level = 0, $jenis_file = array('php')) {
     foreach (ListIn($nama_folder, $nama_folder . '/') as $value) {
         $exts = explode('.', $value);
 		$ext = $exts[count($exts) - 1];
-		if(in_array($ext,$jenis_file)){
+		if(in_array(strtolower($ext),$jenis_file)){
 			$data[] = $value;
 		}
     }

@@ -12,7 +12,33 @@ class Project {
 	function __construct(){		
 		$auto = & load_class('Autotable');
 		$auto->set_autotable();
-	}
+    }
+    
+    function origin_authenticate(){
+        $http_origin = $_SERVER['HTTP_ORIGIN'];
+        if (strpos(base_url, $http_origin) !== false) {
+            
+        }else{
+            if(defined('allowed_origin')){
+                if(allowed_origin!='*'){
+                    if($http_origin==allowed_origin){} else {
+                        $http_origin_explode = explode('|',allowed_origin);
+                        if(count($http_origin_explode)>1){
+                            if(in_array($http_origin, $http_origin_explode)){
+
+                            }else{
+                                show_error('Permission','Origin unauthorized');    
+                            }
+                        }else{
+                            show_error('Permission','Origin unauthorized');
+                        }
+                    }
+                }
+            }else{
+                show_error('Permission','Origin unauthorized');
+            }
+        }
+    }
 
     function is_exist_project($project) {
         if (!in_array($project, load_file('project')))
@@ -175,7 +201,9 @@ class Project {
 
 		if(in_array($this->controller,$base_directory)){
 			show_error('Permission', 'You dont have permission to access this page');	
-		}
+        }
+
+        // $this->origin_authenticate();
 
         $Render = & load_class($controller);
         if (method_exists($controller, $method)){

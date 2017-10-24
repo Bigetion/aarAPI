@@ -21,19 +21,21 @@ class image extends Main {
         return $extensions[$mime_type];
     }
 
-    function upload(){
+    function uploadContentImages(){
+        $this->auth->permission();
         $post_data = $this->render->json_post();
-        $path = $post_data['path'];
         $images = $post_data['images'];
-        $this->dir->create_dir('application/images/'.$path);
+        $this->dir->create_dir('application/images/content_images');
 
         $type = array();
         foreach($images as $image){
-            $imgdata = $this->decodeBase64Image($image['src']);
-            $f = finfo_open();
-            $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
-            $extension = $this->getExtension($mime_type);
-            file_put_contents('application/images/'.$path.'/'.$image['id'].'.'.$extension, $imgdata);
+            if($image['src'] && $image['id']){
+                $imgdata = $this->decodeBase64Image($image['src']);
+                $f = finfo_open();
+                $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
+                $extension = $this->getExtension($mime_type);
+                file_put_contents('application/images/content_images/'.$image['id'].'.'.$extension, $imgdata);
+            }
         }
         $this->render->json($type);
     }
@@ -42,14 +44,18 @@ class image extends Main {
         $id_image = subsegment(-1);
         $path = subsegment(4,-1);
         $path = 'application/images/'.$path;
-        $fileOut = "application/images/default.png";
+        if (file_exists($path."/default.png")) {
+            $fileOut = $path."/default.png";
+        }else{
+            $fileOut = "application/images/default.png";
+        }
         if (is_dir($path)){
             $images = load_recursive($path, 0, array('jpg','jpeg','gif','png'));
             foreach($images as $image){
                 $path_info = pathinfo($image);
                 $basename = $path_info['basename'];
                 $filename = $path_info['filename'];
-                if($filename == $id_image){
+                if($filename == $id_image || $basename == $id_image){
                     $fileOut = $image;
                 }
             }

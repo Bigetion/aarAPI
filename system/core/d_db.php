@@ -229,7 +229,7 @@ class DB
 			}
 		}
 		catch (PDOException $e) {
-			throw new Exception($e->getMessage());
+			show_error('Database connection error','Cannot connect to database '.$options['database_name']);
 		}
 	}
 
@@ -1017,7 +1017,8 @@ class DB
 			}
 		}
 		
-		return $this->exec('UPDATE ' . $this->tableQuote($table) . ' SET ' . implode(', ', $fields) . $this->whereClause($where));
+		$this->exec('UPDATE ' . $this->tableQuote($table) . ' SET ' . implode(', ', $fields) . $this->whereClause($where));
+		return true;
 	}
 
 	public function delete($table, $where)

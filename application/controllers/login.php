@@ -4,6 +4,17 @@ class Login extends Main {
 
     function index(){
         $json_data = $this->render->json_post();
+		$this->gump->validation_rules(array(
+			'username'    		=> 'required|alpha_numeric',
+			'password'    		=> 'required',
+		));
+
+		$this->gump->filter_rules(array(
+			'username' 			=> 'trim|sanitize_string',
+			'password' 			=> 'trim',
+		));
+        $this->gump->run_validation($json_data);
+        
         $user = strtolower($json_data['username']);
         $password = $json_data['password'];
 
