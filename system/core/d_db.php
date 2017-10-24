@@ -1017,7 +1017,8 @@ class DB
 			}
 		}
 		
-		return $this->exec('UPDATE ' . $this->tableQuote($table) . ' SET ' . implode(', ', $fields) . $this->whereClause($where));
+		$this->exec('UPDATE ' . $this->tableQuote($table) . ' SET ' . implode(', ', $fields) . $this->whereClause($where));
+		return true;
 	}
 
 	public function delete($table, $where)

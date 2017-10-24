@@ -15,7 +15,9 @@ class Terms extends Main {
             '[>]blog_terms' => 'term_id'
         ],[
             'blog_terms.term_id(id)',
-            'blog_terms.name(text)'
+            'blog_taxonomy.term_taxonomy_id(taxonomy_id)',
+            'blog_terms.name(text)',
+            'blog_taxonomy.description'
         ],[
             'blog_taxonomy.taxonomy' => $type
         ]);
@@ -24,30 +26,58 @@ class Terms extends Main {
 
     function submitAdd(){
         $post_data = $this->render->json_post();
+        $type = 'category';
+        if(isset($post_data['type'])){
+            $type = $post_data['type'];
+        }
         $data = array(
-            'id_category'     => $post_data['idCategory'],
-            'category_name'   => $post_data['categoryName'],
+            'name'  => $post_data['name'],
+            'slug'  => $post_data['slug'],
         );
-        if($this->db->insert("blog_categories", $data)){
+        if($this->db->insert("blog_terms", $data)){
             $id = $this->db->id();
-            $this->set->success_message(true, array('id'=>$id));
+            $data_taxonomy = array(
+                'term_id'       => $id,
+                'taxonomy'      => $type,
+                'description'  => $post_data['description']
+            );
+            $this->db->insert("blog_taxonomy", $data_taxonomy);
+            $this->set->success_message(true);
         }
     }
 
     function submitEdit(){
         $post_data = $this->render->json_post();
+        $type = 'category';
+        $id = $post_data['id'];
+        $taxonomy_id = $post_data['taxonomyId'];
+        if(isset($post_data['type'])){
+            $type = $post_data['type'];
+        }
         $data = array(
-            'id_category'     => $post_data['idCategory'],
-            'category_name'   => $post_data['categoryName'],
+            'name'  => $post_data['name'],
+            'slug'  => $post_data['slug'],
         );
-        if($this->db->update("blog_categories", $data, ["id_role" => $post_data['idCategoryOld']])){
+        if($this->db->update("blog_terms", $data, ["term_id"=>$id])){
+            $data_taxonomy = array(
+                'description'  => $post_data['description']
+            );
+            $this->db->update("blog_taxonomy", $data_taxonomy, ["term_taxonomy_id"=>$taxonomy_id]);
             $this->set->success_message(true);
         }
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitDelete(){
         $post_data = $this->render->json_post();
-        if($this->db->delete("blog_categories", ["id_category" => $post_data['idCategory']])){
+        $type = 'category';
+        if(isset($post_data['type'])){
+            $type = $post_data['type'];
+        }
+        $id = $post_data['id'];
+        $taxonomy_id = $post_data['taxonomyId'];
+        if($this->db->delete("blog_terms", ["term_id" => $id])){
+            $this->db->delete("blog_taxonomy", ["term_taxonomy_id"=>$taxonomy_id]);
             $this->set->success_message(true);
         }
     }
