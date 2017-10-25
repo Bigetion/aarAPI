@@ -10,6 +10,16 @@ class Posts extends Main {
         $this->render->json($data);
     }
 
+    function setFeaturedImage(){
+        $post_data = $this->render->json_post();
+        $data = array(
+            'thumbnail' => $post_data['thumbnail']
+        );
+        if($this->db->update("blog_posts", $data, ["id_post" => $post_data['idPost']])){
+            $this->set->success_message(true);
+        }
+    }
+
     function submitAdd(){
         $post_data = $this->render->json_post();
         $data = array(
