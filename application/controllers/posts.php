@@ -23,22 +23,31 @@ class Posts extends Main {
     function submitAdd(){
         $post_data = $this->render->json_post();
         $data = array(
-            'post_title'     => $post_data['postTitle'],
-            'post_content'   => $post_data['postContent'],
-            'description'    => $post_data['description'],
+            'author_id'         => id_user,   
+            'post_title'        => $post_data['postTitle'],
+            'post_title_slug'   => $post_data['postTitleSlug'],
+            'post_content'      => $post_data['postContent'],
+            'description'       => $post_data['description'],
+            'post_categories'   => $post_data['postCategories'],
+            'post_tags'         => $post_data['postTags']  
         );
         if($this->db->insert("blog_posts", $data)){
             $id = $this->db->id();
             $this->set->success_message(true, array('id'=>$id));
         }
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitEdit(){
         $post_data = $this->render->json_post();
         $data = array(
-            'post_title'     => $post_data['postTitle'],
-            'post_content'   => $post_data['postContent'],
-            'description'    => $post_data['description'],
+            'author_id'         => id_user,   
+            'post_title'        => $post_data['postTitle'],
+            'post_title_slug'   => $post_data['postTitleSlug'],
+            'post_content'      => $post_data['postContent'],
+            'description'       => $post_data['description'],
+            'post_categories'   => $post_data['postCategories'],
+            'post_tags'         => $post_data['postTags'] 
         );
         if($this->db->update("blog_posts", $data, ["id_post" => $post_data['idPost']])){
             $this->set->success_message(true);

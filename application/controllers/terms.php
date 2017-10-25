@@ -11,6 +11,12 @@ class Terms extends Main {
         if(isset($post_data['type'])){
             $type = $post_data['type'];
         }
+        $where = array();
+        $where["blog_taxonomy.taxonomy"] = $type;
+
+        if(isset($post_data['id'])){
+            $where["blog_terms.term_id"] = $post_data["id"];
+        }
         $data['data'] = $this->db->select("blog_taxonomy",[
             '[>]blog_terms' => 'term_id'
         ],[
@@ -18,9 +24,7 @@ class Terms extends Main {
             'blog_taxonomy.term_taxonomy_id(taxonomy_id)',
             'blog_terms.name(text)',
             'blog_taxonomy.description'
-        ],[
-            'blog_taxonomy.taxonomy' => $type
-        ]);
+        ], $where);
         $this->render->json($data);
     }
 
@@ -46,7 +50,7 @@ class Terms extends Main {
                 'description'   => $description
             );
             $this->db->insert("blog_taxonomy", $data_taxonomy);
-            $this->set->success_message(true);
+            $this->set->success_message(true, ["id"=>$id]);
         }
         $this->set->error_message(true);
     }
