@@ -6,7 +6,7 @@ class Posts extends Main {
     }
 
     function getData(){
-        $data['data'] = $this->db->select("blog_posts","*");
+        $data['data'] = $this->db->select("blog_posts","*",["ORDER"=>["created"=>"DESC"]]);
         $this->render->json($data);
     }
 
