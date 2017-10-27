@@ -40,6 +40,25 @@ class Project {
         }
     }
 
+    function params_validation($path){
+        if (file_exists($path)) {
+            $json = json_decode(file_get_contents($path), true);
+            $gump = & load_class('GUMP');
+            if(isset($json[$this->method])){
+                if(isset($json[$this->method]['validation'])||isset($json[$this->method]['filter'])){
+                    $post_data = json_decode(file_get_contents('php://input'), true);
+                    if(isset($json[$this->method]['validation'])){
+                        $gump->validation_rules($json[$this->method]['validation']);
+                    }
+                    if(isset($json[$this->method]['filter'])){
+                        $gump->filter_rules($json[$this->method]['filter']);
+                    }
+                    $gump->run_validation($post_data);
+                }
+            }
+        }   
+    }
+
     function is_exist_project($project) {
         if (!in_array($project, load_file('project')))
             return false;
@@ -199,7 +218,7 @@ class Project {
 		
 		$base_directory = array('application','project','system');
 
-		if(in_array($this->controller,$base_directory)){
+		if(in_array($controller,$base_directory)){
 			show_error('Permission', 'You dont have permission to access this page');	
         }
 
@@ -210,13 +229,14 @@ class Project {
 			if($this->is_project) {
 				if(method_exists(default_project_controller,"__global")){
 					$Render->load->url(default_project."/".default_project_controller."/__global");	
-				}
+                }
+                $this->params_validation('project/'.$this->project.'/params/'.$controller.'.json');
 			}else{
-				
+				$this->params_validation('application/params/'.$controller.'.json');
 			}			
             $Render->$method();
 		}
-        else show_error('Page not found','Controller '.$this->controller.' with function '. $this->method .' was not found');
+        else show_error('Page not found','Controller '.$controller.' with function '. $method .' was not found');
     }
 }
 

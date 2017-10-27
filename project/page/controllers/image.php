@@ -2,21 +2,21 @@
 class image extends Controller {
 
 	function getAllImage(){
-        $post_data = $this->render->json_post();
-        $path = 'application/images/editor';
+    $post_data = $this->render->json_post();
+    $path = 'application/images/editor';
 		$this->dir->create_dir($path);
-        $images = load_recursive($path, 0, array('jpg','jpeg','png'));
+    $images = load_recursive($path, 0, array('jpg','jpeg','png'));
 
-        $data['images'] = array();
-        foreach($images as $image){
+    $data['images'] = array();
+    foreach($images as $image){
 			$image = pathinfo($image);
-            $data['images'][] = array(
+      $data['images'][] = array(
 				'url'	=> base_url.'image/get/editor/'.$image['basename'],
 				'thumb'	=> base_url.'image/get/editor/'.$image['basename'],
 				'tag'	=> $image['filename']
 			);
-        }
-        $this->render->json($data['images']);
+    }
+    $this->render->json($data['images']);
 	}
 	
 	function uploadImage(){

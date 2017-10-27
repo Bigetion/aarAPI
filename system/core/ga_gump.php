@@ -53,7 +53,7 @@ class GUMP
             if (file_exists($lang_file)) {
                 $this->lang = $lang;
             } else {
-                throw new \Exception('Language with key "'.$lang.'" does not exist');
+                show_error('GUMP Error', 'Language with key "'.$lang.'" does not exist');
             }
         }
     }
@@ -128,7 +128,7 @@ class GUMP
     {
         $method = 'validate_'.$rule;
         if (method_exists(__CLASS__, $method) || isset(self::$validation_methods[$rule])) {
-            throw new Exception("Validator rule '$rule' already exists.");
+            show_error("GUMP Error","Validator rule '$rule' already exists.");
         }
         self::$validation_methods[$rule] = $callback;
         if ($error_message) {
@@ -150,7 +150,7 @@ class GUMP
     {
         $method = 'filter_'.$rule;
         if (method_exists(__CLASS__, $method) || isset(self::$filter_methods[$rule])) {
-            throw new Exception("Filter rule '$rule' already exists.");
+            show_error("GUMP Error","Filter rule '$rule' already exists.");
         }
         self::$filter_methods[$rule] = $callback;
         return true;
@@ -238,20 +238,21 @@ class GUMP
      */
      public function run_validation($data, $check_fields = false)
      {
-         if(isset($data)){
-            $data = $this->filter($data, $this->filter_rules());
-            $validated = $this->validate(
-                $data, $this->validation_rules()
-            );
-            if ($check_fields === true) {
-                $this->check_fields($data);
-            }
-            if ($validated !== true) {
-               $set = & load_class('Set');
-               $error_params = array("error_params"=>$this->get_errors_array());
-               $set->error_message(true,$error_params);
-            }
-         }
+        if(!isset($data)){
+            $data = array("_"=>"_");
+        }
+        $data = $this->filter($data, $this->filter_rules());
+        $validated = $this->validate(
+            $data, $this->validation_rules()
+        );
+        if ($check_fields === true) {
+            $this->check_fields($data);
+        }
+        if ($validated !== true) {
+           $set = & load_class('Set');
+           $error_params = array("error_params"=>$this->get_errors_array());
+           $set->error_message(true,$error_params);
+        }
      }
     /**
      * Ensure that the field counts match the validation rule counts.
@@ -395,7 +396,7 @@ class GUMP
                                 }
                             }
                         } else {
-                            throw new Exception("Validator method '$method' does not exist.");
+                            show_error("GUMP Error","Validator method '$method' does not exist.");
                         }
                     }
                 }
@@ -511,7 +512,7 @@ class GUMP
                 $message = str_replace('{param}', $param, str_replace('{field}', '<span class="'.$field_class.'">'.$field.'</span>', $messages[$e['rule']]));
                 $resp[] = $message;
             } else {
-                throw new \Exception ('Rule "'.$e['rule'].'" does not have an error message');
+                show_error('GUMP Error', 'Rule "'.$e['rule'].'" does not have an error message');
             }
         }
         if (!$convert_to_string) {
@@ -563,7 +564,7 @@ class GUMP
                     $resp[$e['field']] = $message;
                 }
             } else {
-                throw new \Exception ('Rule "'.$e['rule'].'" does not have an error message');
+                show_error('GUMP Error', 'Rule "'.$e['rule'].'" does not have an error message');
             }
         }
         return $resp;
@@ -608,7 +609,7 @@ class GUMP
                     } elseif (isset(self::$filter_methods[$filter])) {
                         $value = call_user_func(self::$filter_methods[$filter], $value, $params);
                     } else {
-                        throw new Exception("Filter method '$filter' does not exist.");
+                        show_error("GUMP Error","Filter method '$filter' does not exist.");
                     }
                 }
             }
