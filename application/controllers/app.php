@@ -37,18 +37,18 @@ class App extends Main {
 
     function changePassword(){
         $post_data = $this->render->json_post();
-		$user = $this->db->select("users","*",["id_user"=>$post_data['idUser']]);
+		$user = $this->db->select("users","*",["id_user"=>id_user]);
 		if(password_verify($post_data['passwordOld'],$user[0]['password'])){
 			$data = array(
 				"password"	=> password_hash($post_data['passwordNew'],1)
 			);
-			if($this->db->update("users", $data, ["id_user"=>$post_data['idUser']])){
+			if($this->db->update("users", $data, ["id_user"=>id_user])){
 				$this->set->success_message(true);
 			}else{
-				$this->set->error_message(false);
+				$this->set->error_message(true);
 			}
 		}else{
-            $this->set->error_message(false);
+            $this->set->error_message(true);
         }        
     }
     
