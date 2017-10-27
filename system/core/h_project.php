@@ -52,7 +52,9 @@ class Project {
                     }
                     if(isset($json[$this->method]['filter'])){
                         $gump->filter_rules($json[$this->method]['filter']);
+                        $post_data = $gump->filter($post_data, $json[$this->method]['filter']);
                     }
+                    $_POST = $post_data;
                     $gump->run_validation($post_data);
                 }
             }

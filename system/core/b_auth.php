@@ -2,11 +2,6 @@
 
 class Auth {
     function permission() {
-        $request_payload = json_decode(file_get_contents('php://input'), true);
-        if(empty($request_payload)){
-            
-        }
-
         if(get_header('Authorization')){
             $authorization_header = get_header('Authorization');
             $bearer_header_list = explode('Bearer',get_header('Authorization'));
