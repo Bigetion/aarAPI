@@ -35,8 +35,8 @@ class Permissions extends Main {
     }
 
     function updatePermissions(){
-        $json_data = $this->render->json_post();
-        $permissions = $json_data['permissions'];
+        $post_data = $this->render->json_post();
+        $permissions = $post_data['permissions'];
         $data['data'] = '';
         foreach ($permissions as $key => $val) {
             if($key==1) {

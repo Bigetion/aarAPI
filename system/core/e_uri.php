@@ -14,7 +14,7 @@ class URI {
 	
     function segment($nomor){
 		$db = & load_class('DB');		
-		$uri_base = explode('?', $_SERVER['REQUEST_URI']);
+		$uri_base = explode('?', (isset($_SERVER['HTTPS']) ? "https" : "http")."://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
 		$uri_link = explode('/',$uri_base[0]);
 		$uri_new = $uri_base[0];
 		
@@ -24,7 +24,6 @@ class URI {
 		if(in_array('short_link', $tabel)){
 			for($i=0;$i<count($uri_link);$i++){
 				$link = $db->query("select * from short_link where short_link='".str_replace($ext, '', $uri_link[$i])."'")->fetchAll();
-
 				if(count($link)>0) {
 					$link = $link[0];
 					$uri_new = str_replace($uri_link[$i],$link["link"],$uri_new);
@@ -32,21 +31,17 @@ class URI {
 			}
 		}
 		
-		$data = explode('/', $uri_new); $c=4;
-		if(strpos(base_url,"http://")===false) $c=2;
-		
-		if(count(explode('/',base_url))==$c) $nomor = $nomor-1;
-		
-		if ($nomor > count($data) - 1) return "";
-		else return str_replace($ext, '', $data[$nomor]);		
+		$uri_new = str_replace(base_url,'', $uri_new);
+		$data = explode('/', $uri_new);
+		if ($nomor > count($data)) return '';
+		else return str_replace($ext, '', $data[$nomor-1]);
 	}
-
+	
 	function subsegment($from=-1, $to=0){
 		$uri_base = explode('?', $_SERVER['REQUEST_URI']);
 		$uri_link = explode('/',$uri_base[0]);
 		$count =  count($uri_link);
 		$segment = '';
-
 		if($from<0 || $from>$count){
 			$segment = $uri_link[$count-1];
 		}else if($from==$to) {
@@ -59,9 +54,7 @@ class URI {
 			}
 			$segment = substr($segment, 0, -1);
 		}
-
 		return $segment;
 	}
 }
-
 ?>

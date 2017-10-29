@@ -3,7 +3,7 @@
 class Login extends Main {
 
     function index(){
-        $json_data = $this->render->json_post();
+        $post_data = $this->render->json_post();
 		$this->gump->validation_rules(array(
 			'username'    		=> 'required|alpha_numeric',
 			'password'    		=> 'required',
@@ -13,10 +13,10 @@ class Login extends Main {
 			'username' 			=> 'trim|sanitize_string',
 			'password' 			=> 'trim',
 		));
-        $this->gump->run_validation($json_data);
+        $this->gump->run_validation($post_data);
         
-        $user = strtolower($json_data['username']);
-        $password = $json_data['password'];
+        $user = strtolower($post_data['username']);
+        $password = $post_data['password'];
 
         if (empty($user)|| empty($password))
             $this->set->error_message(true);
