@@ -19,13 +19,14 @@ class Login extends Main {
         $password = $json_data['password'];
 
         if (empty($user)|| empty($password))
-            $this->set->error_message(false);
+            $this->set->error_message(true);
             
         $data = $this->db->select("users","*",["username"=>$user]);
         if (count($data) == 0)
             $this->set->error_message(true);
         else {
-            if(!password_verify($password,$data[0]["password"])) $this->set->error_message(false);
+            if(!password_verify($password,$data[0]["password"])) $this->set->error_message(true);
+            else if($data[0]["id_role"]==2) $this->set->error_message(true);
             else{
                 try{
                     $payload = array(
