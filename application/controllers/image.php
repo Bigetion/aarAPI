@@ -67,7 +67,8 @@ class image extends Main {
     
     function get(){
         $id_image = subsegment(-1);
-        $path = subsegment(4,-1);
+        $base_path = explode('/', str_replace('://','',base_url));
+        $path = subsegment(count($base_path)+1,-1);
         $path = 'application/images/'.$path;
         if (file_exists($path."/default.png")) {
             $fileOut = $path."/default.png";
