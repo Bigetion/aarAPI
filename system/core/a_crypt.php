@@ -50,6 +50,49 @@ class Crypt {
 		
 		return $ord;
 	}
+
+	private function get_key_session($str){
+		$key = implode("",$this->get_ord($str));
+		$x = strlen($key) % 2;
+		if($x > 0){
+			$key .= substr($key, 0, 2-$x);
+		}
+		$s = strlen($key)/2;
+		$t = array();
+		for($i=0;$i<$s;$i++){
+			$t[] = intval(substr($key,$i*2,2));
+		}
+		return $t;
+	}
+
+	private function get_key($str){
+		$k2xrk = array();
+		while(count($k2xrk)<128){
+			$rk = $this->get_ord($str);
+			$k = array();
+			$k2 = array();
+			$k2xrk = array();
+			for($i=count($rk)-1;$i>=0;$i--){
+				$k[] = $rk[$i];
+			}
+
+			$sum_k = 0;
+			for($i=0;$i<count($k);$i++){
+				$sum_k += ($k[$i] * ($i+1));
+			}
+
+			$mod_sum = $sum_k % count($k);
+			for($i=0;$i<count($k);$i++){
+				$k2[] = ($mod_sum+$k[$i]);
+			}
+
+			for($i=0;$i<count($k);$i++){
+				$k2xrk[] = $k2[$i] * $rk[$i] * ($i+1);
+			}
+			$str = implode("",$k2xrk);
+		}
+		return $k2xrk;
+	}
 	
 	private function acm($p,$q,$maks_offset){
 		$arr_acm = array();	
@@ -77,7 +120,7 @@ class Crypt {
 		$str = str_pad($str,10," ");
 		
 		$arr_str = $this->get_ord($str);
-		$arr_key = $this->get_ord($key);
+		$arr_key = $this->get_key($key);
 		
 		$arr_result = array();
 		$arr_acm = $this->acm($p,$q,strlen($str)*2);
@@ -104,12 +147,10 @@ class Crypt {
 	
 	function rand_decrypt($str, $key, $p=8279, $q=6371){
 		$arr_tmp_result_char = $this->get_ord(base64_decode($str));
-		$arr_key = $this->get_ord($key);
+		$arr_key = $this->get_key($key);
 		
-		$arr_result = array();
 		$arr_acm = $this->acm($p,$q,count($arr_tmp_result_char));
 		
-		$arr_result2 = array();
 		$result = "";
 		for($i=0;$i<(count($arr_tmp_result_char)/2);$i++){
 			$j = $i*2;
@@ -118,16 +159,15 @@ class Crypt {
 				$c1 = $arr_tmp_result_char[$arr_acm[$j]];
 				$c2 = $arr_tmp_result_char[$arr_acm[$j+1]];
 				
-				$r = ($c1-$arr_key[$i%count($arr_key)])-($c2-(2*$arr_key[$i%count($arr_key)]));
+				$r = (($c1-$arr_key[$i%count($arr_key)] % 127))-(($c2-(2*$arr_key[$i%count($arr_key)])) % 127);
 				if($r<0) $r+=127;
 				else if($r>127) $r-=127;
 				
-				$arr_result2[] = $r;
 				$result .= chr($r);
 			}
 		}
-		
-		return trim($result);
+		if(strlen($result)==10) $result = trim($result);
+		return $result;
 	}
 
 }
