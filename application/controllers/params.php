@@ -29,7 +29,7 @@ class Params extends Main {
                                         $this->dir->create_dir('project/'.$module.'/params');
                                         if(!file_exists('project/'.$module.'/params/'.$function.'.json')){
                                             $json_data = json_encode(array());
-                                            file_put_contents($function.'.json', $json_data);
+                                            file_put_contents('project/'.$module.'/params/'.$function.'.json', $json_data);
                                         }
                                         $data['params'][$module][$function] = json_decode(file_get_contents('project/'.$module.'/params/'.$function.'.json'), true);
                                     }
