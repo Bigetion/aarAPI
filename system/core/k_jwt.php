@@ -18,13 +18,13 @@ class JWT
         $signing_input = implode('.', $segments);
         $signature = JWT::sign($signing_input, $key, $algo);
         $segments[] = JWT::urlsafeB64Encode($signature);
-        return $crypt->rand_encrypt(implode('.', $segments), secret_key);
+        return $crypt->acm_rand_encrypt(implode('.', $segments), secret_key);
     }
     public static function decode($jwt, $key = null, $algo = 'HS256')
     {
         $crypt = & load_class('Crypt');
 
-        $jwt = $crypt->rand_decrypt($jwt, secret_key);
+        $jwt = $crypt->acm_rand_decrypt($jwt, secret_key);
         $tks = explode('.', $jwt);
         if (count($tks) != 3) {
             show_error("Authentication","JWT wrong number of segments");
