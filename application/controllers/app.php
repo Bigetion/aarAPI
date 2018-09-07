@@ -1,19 +1,8 @@
 <?php  if ( ! defined('INDEX')) exit('No direct script access allowed');
 
 class App extends Main {
-    function __construct() {
-        $this->auth->permission();
-    }
-
-    function getIdRole(){
-        $data['idRole'] = 2;
-        if (defined('id_role')){
-            $data['idRole'] = id_role;
-        }  
-        $this->render->json($data); 
-    }
-
-    function getModules() {		
+    function getModules() {
+        $this->auth->permission();	
         $a = load_file('project');
 
         foreach ($a as $value) {
@@ -36,6 +25,7 @@ class App extends Main {
     }
 
     function changePassword(){
+        $this->auth->permission();
         $post_data = $this->render->json_post();
 		$user = $this->db->select("users","*",["id_user"=>id_user]);
 		if(password_verify($post_data['passwordOld'],$user[0]['password'])){
