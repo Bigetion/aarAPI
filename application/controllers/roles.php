@@ -15,6 +15,7 @@ class Roles extends Main {
         $data = array(
             'role_name'     => $post_data['roleName'],
             'description'   => $post_data['description'],
+            'permissions'   => ' ',
         );
         if($this->db->insert("roles", $data)){
             $id = $this->db->id();
@@ -27,6 +28,7 @@ class Roles extends Main {
         $data = array(
             'role_name'     => $post_data['roleName'],
             'description'   => $post_data['description'],
+            'permissions'   => ' ',
         );
         if($this->db->update("roles", $data, ["id_role" => $post_data['idRole']])){
             $this->set->success_message(true);
