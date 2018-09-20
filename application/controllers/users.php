@@ -39,7 +39,7 @@ class Users extends Main {
 
     function submitDelete(){
         $post_data = $this->render->json_post();
-        if($this->db->delete("users", ["id_user" => explode(',',$post_data['idUser'])])){
+        if($this->db->delete("users", ["id_user" => $post_data['idUser']])){
             $this->set->success_message(true);
         }
     }
