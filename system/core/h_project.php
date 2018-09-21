@@ -235,8 +235,11 @@ class Project {
                 $this->params_validation('project/'.$this->project.'/params/'.$controller.'.json');
 			}else{
 				$this->params_validation('application/params/'.$controller.'.json');
-			}			
-            $Render->$method();
+            }
+            $header_with_payload = get_header('Access-Control-Request-Method');
+            if(!$header_with_payload){
+                $Render->$method();
+            }		
 		}
         else show_error('Page not found','Controller '.$controller.' with function '. $method .' was not found');
     }
