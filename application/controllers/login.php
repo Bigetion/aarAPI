@@ -15,7 +15,7 @@ class Login extends Main {
 		));
         $this->gump->run_validation($post_data);
         
-        $user = strtolower($post_data['username']);
+        $user = $post_data['username'];
         $password = $post_data['password'];
 
         function random_string($length = 10) {
@@ -46,7 +46,7 @@ class Login extends Main {
                         'exp'       => time() + 7210,
                         'iss'       => get_header('origin'),
                         'data'      => array(
-                                    'user'  => strtolower($user),
+                                    'user'  => $user,
                                     )
                     );
                     $jwtTokenEncode = $this->jwt->encode($payload, base64_decode(secret_key));
