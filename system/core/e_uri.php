@@ -13,11 +13,14 @@ class URI {
 	}
 	
     function segment($nomor){
-		$db = & load_class('DB');		
-		$uri_base = explode('?', (isset($_SERVER['HTTPS']) ? "https" : "http")."://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
-		$uri_link = explode('/',$uri_base[0]);
-		$uri_new = $uri_base[0];
-		
+		$db = & load_class('DB');
+		$base_url = str_replace("http://","",str_replace("https://", "", base_url));
+		$current_url = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		$uri_base = explode('?', $current_url);
+		$uri_base = str_replace($base_url,'', $uri_base[0]);
+		$uri_link = explode('/',$uri_base);
+		$uri_new = $uri_base;
+				
 		$ext = array(".html", ".aspx", ".asp");
 		
 		$tabel = $db->get_table();
@@ -31,7 +34,6 @@ class URI {
 			}
 		}
 		
-		$uri_new = str_replace(base_url,'', $uri_new);
 		$data = explode('/', $uri_new);
 		if ($nomor > count($data)) return '';
 		else return str_replace($ext, '', $data[$nomor-1]);
