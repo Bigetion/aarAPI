@@ -19,6 +19,7 @@ class Users extends Main {
         $data = array(
             'username'  => $post_data['userName'],
             'id_role'   => $post_data['idRole'],
+            'password'  => password_hash($post_data['password'],1)
         );
         if($this->db->insert("users", $data)){
             $id = $this->db->id();
