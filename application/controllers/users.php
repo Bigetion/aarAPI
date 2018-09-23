@@ -24,6 +24,7 @@ class Users extends Main {
             $id = $this->db->id();
             $this->set->success_message(true, array('id'=>$id));
         }
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitEdit(){
@@ -35,6 +36,7 @@ class Users extends Main {
         if($this->db->update("users", $data, ["id_user" => $post_data['idUser']])){
             $this->set->success_message(true);
         }
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitDelete(){
@@ -42,6 +44,7 @@ class Users extends Main {
         if($this->db->delete("users", ["id_user" => $post_data['idUser']])){
             $this->set->success_message(true);
         }
+        $this->set->error_message(true, $this->db->log());
     }
 }    
 ?>

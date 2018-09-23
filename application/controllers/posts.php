@@ -18,6 +18,7 @@ class Posts extends Main {
         if($this->db->update("blog_posts", $data, ["id_post" => $post_data['idPost']])){
             $this->set->success_message(true);
         }
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitAdd(){
@@ -52,6 +53,7 @@ class Posts extends Main {
         if($this->db->update("blog_posts", $data, ["id_post" => $post_data['idPost']])){
             $this->set->success_message(true);
         }
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitDelete(){
@@ -59,6 +61,7 @@ class Posts extends Main {
         if($this->db->delete("blog_posts", ["id_post" => explode(',',$post_data['idPost'])])){
             $this->set->success_message(true);
         }
+        $this->set->error_message(true, $this->db->log());
     }
 }    
 ?>

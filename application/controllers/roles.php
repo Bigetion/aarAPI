@@ -21,6 +21,7 @@ class Roles extends Main {
             $id = $this->db->id();
             $this->set->success_message(true, array('id'=>$id));
         }
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitEdit(){
@@ -33,6 +34,7 @@ class Roles extends Main {
         if($this->db->update("roles", $data, ["id_role" => $post_data['idRole']])){
             $this->set->success_message(true);
         }
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitDelete(){
@@ -40,6 +42,7 @@ class Roles extends Main {
         if($this->db->delete("roles", ["id_role" => $post_data['idRole']])){
             $this->set->success_message(true);
         }
+        $this->set->error_message(true, $this->db->log());
     }
 }    
 ?>

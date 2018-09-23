@@ -52,7 +52,7 @@ class Terms extends Main {
             $this->db->insert("blog_taxonomy", $data_taxonomy);
             $this->set->success_message(true, ["id"=>$id]);
         }
-        $this->set->error_message(true);
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitEdit(){
@@ -74,7 +74,7 @@ class Terms extends Main {
             $this->db->update("blog_taxonomy", $data_taxonomy, ["term_taxonomy_id"=>$taxonomy_id]);
             $this->set->success_message(true);
         }
-        $this->set->error_message(true);
+        $this->set->error_message(true, $this->db->log());
     }
 
     function submitDelete(){
@@ -89,7 +89,7 @@ class Terms extends Main {
             $this->db->delete("blog_taxonomy", ["term_taxonomy_id"=>$taxonomy_id]);
             $this->set->success_message(true);
         }
-        $this->set->error_message(true);
+        $this->set->error_message(true, $this->db->log());
     }
 }    
 ?>
