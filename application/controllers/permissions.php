@@ -6,7 +6,9 @@ class Permissions extends Main {
     }
 
     function getPermissions() {
-        $data['data'] = $this->db->select("roles","*");
+        $data['data'] = $this->db->select("roles","*", [
+            "ORDER" => ["id_role" => "ASC"],
+        ]);
         $a = load_file('project');
 		if(count($a)>0){
         foreach ($a as $value) {

@@ -10,6 +10,8 @@ class Users extends Main {
             "[>]roles" => "id_role"
         ],[
             "users.id_user", "users.id_role","users.username", "roles.role_name"
+        ], [
+            "ORDER" => ["users.id_user" => "ASC"],
         ]);
         $this->render->json($data);
     }

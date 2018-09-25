@@ -6,7 +6,9 @@ class Roles extends Main {
     }
 
     function getData(){
-        $data['data'] = $this->db->select("roles","*");
+        $data['data'] = $this->db->select("roles","*", [
+            "ORDER" => ["id_role" => "ASC"],
+        ]);
         $this->render->json($data);
     }
 
