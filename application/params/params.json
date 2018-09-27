@@ -1,0 +1,9 @@
+{
+  "updateParams": {
+    "validation": {
+      "module": "required",
+      "controller": "required",
+      "validation": "required"
+    }
+  }
+}
