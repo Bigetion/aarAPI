@@ -16,11 +16,11 @@
     }
 
     // Read store objects.
-    public function fetch() {
+    public function fetch($keys=array()) {
       // Check if data should be provided from the cache.
-      if ( $this->makeCache === true ) return $this->reGenerateCache(); // Re-generate cache.
-      else if ( $this->useCache === true ) return $this->useExistingCache(); // Use existing cache else re-generate.
-      else return $this->findStore(); // Returns data without looking for cached data.
+      if ( $this->makeCache === true ) return $this->reGenerateCache($keys); // Re-generate cache.
+      else if ( $this->useCache === true ) return $this->useExistingCache($keys); // Use existing cache else re-generate.
+      else return $this->findStore($keys); // Returns data without looking for cached data.
     }
 
     // Creates a new object in the store.

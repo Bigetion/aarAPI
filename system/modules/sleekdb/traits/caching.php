@@ -7,9 +7,9 @@
     
     // Make cache deletes the old cache if exists then creates a new cache file.
     // returns the data.
-    private function reGenerateCache() {
+    private function reGenerateCache($keys=array()) {
       $token  = $this->getCacheToken();
-      $result = $this->findStore();
+      $result = $this->findStore($keys);
       // Write the cache file.
       file_put_contents( $this->getCachePath( $token ), json_encode( $result ) );
       // Reset cache flags to avoid future queries on the same object of the store.
@@ -20,7 +20,7 @@
 
     // Use cache will first check if the cache exists, then re-use it.
     // If cache dosent exists then call makeCache and return the data.
-    private function useExistingCache() {
+    private function useExistingCache($keys=array()) {
       $token = $this->getCacheToken();
       // Check if cache file exists.
       if ( file_exists( $this->getCachePath( $token ) ) ) {
@@ -30,7 +30,7 @@
         return json_decode( file_get_contents( $this->getCachePath( $token ) ), true );
       } else {
         // Cache file was not found, re-generate the cache and return the data.
-        return $this->reGenerateCache();
+        return $this->reGenerateCache($keys);
       }
     }
 
