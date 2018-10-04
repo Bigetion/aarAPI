@@ -1,7 +1,5 @@
 {
   "getAll": {
-    "validation":{
-      "path":"required"
-    }
+    "validation":{}
   }
 }

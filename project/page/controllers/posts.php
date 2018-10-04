@@ -10,7 +10,18 @@ class posts extends Controller {
 	function submitAdd() {
 		$post_data = $this->render->json_post();
 		$this->sleekdb->setStore('posts');
-		if($this->sleekdb->store->insert($post_data['data'])) {
+		$data = array_unique(array_merge(array("featuredImage" => base_url."image/get/featured"),$post_data['data']));
+		if($this->sleekdb->store->insert($data)) {
+			$this->set->success_message(true);
+		}
+		$this->set->error_message(true);
+	}
+
+	function submitEdit() {
+		$post_data = $this->render->json_post();
+		$this->sleekdb->setStore('posts');
+		if($this->sleekdb->store->where( '_id', '=', $post_data['id'] )->update($post_data['data'])) {
+			$this->sleekdb->store->deleteAllCache();
 			$this->set->success_message(true);
 		}
 		$this->set->error_message(true);

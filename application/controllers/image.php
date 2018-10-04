@@ -6,9 +6,12 @@ class image extends Main {
     }
 
     function getAll(){
+        $this->auth->permission();
         $post_data = $this->render->json_post();
+        $image_path = '';
         $path = 'application/images/featured/thumbs';
         if(isset($post_data['path'])){
+            $image_path = $post_data['path'].'/';
             $path = 'application/images/'.$post_data['path'];
             $this->dir->create_dir($path);
             $path = $path.'/thumbs';
@@ -19,12 +22,16 @@ class image extends Main {
         $data['images'] = array();
         foreach($images as $image){
 			$image = pathinfo($image);
-            $data['images'][] = $image['basename'];
+            $data['images'][] = array(
+                "name" => $image['basename'],
+                "url" => base_url.'image/get/'.$image_path.$image['basename']
+            );
         }
         $this->render->json($data);
     }
 
     function uploadImage(){
+        $this->auth->permission();
 		$allowedExts = array("jpeg", "jpg", "png");
 		$temp = explode(".", $_FILES["image"]["name"]);
 		
@@ -53,6 +60,7 @@ class image extends Main {
 	}
 
     function deleteImage(){
+        $this->auth->permission();
         $post_data = $this->render->json_post();
         $path = 'application/images/featured';
         $path_thumb = $path.'/thumbs';
@@ -86,7 +94,42 @@ class image extends Main {
                 }
             }
         } 
-        $this->render->image($fileOut);
+        if(isset($_GET['w']) && isset($_GET['h'])){
+            $this->imageresize->fromFile($fileOut)->resize($_GET['w'],$_GET['h'])->toScreen();
+        }else if(isset($_GET['w'])){
+            $this->imageresize->fromFile($fileOut)->resize($_GET['w'])->toScreen();
+        }else if(isset($_GET['h'])){
+            $this->imageresize->fromFile($fileOut)->resize(false,$_GET['h'])->toScreen();
+        }else{
+            $this->render->image($fileOut);
+        }
+    }
+
+    function getBase64(){
+        $id_image = subsegment(-1);
+        $base_path = explode('/', str_replace('://','',base_url));
+        $path = subsegment(count($base_path)+1,-1);
+        $path = 'application/images/'.$path;
+        if (file_exists($path."/default.png")) {
+            $fileOut = $path."/default.png";
+        }else{
+            $fileOut = "application/images/default.png";
+        }
+        if (is_dir($path)){
+            $images = load_recursive($path, 0, array('jpg','jpeg','gif','png'));
+            foreach($images as $image){
+                $path_info = pathinfo($image);
+                $basename = $path_info['basename'];
+                $filename = $path_info['filename'];
+                if($filename == $id_image || $basename == $id_image){
+                    $fileOut = $image;
+                }
+            }
+        }
+        $type = pathinfo($fileOut, PATHINFO_EXTENSION);
+        $img = file_get_contents($fileOut);
+        $data['base64'] = 'data:image/' . $type . ';base64,' . base64_encode($img);
+        $this->render->json($data);
     }
 }    
 ?>

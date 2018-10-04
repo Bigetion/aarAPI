@@ -11,9 +11,9 @@
     private function init( $storeName ) {
       if ( ! $storeName OR empty( $storeName ) ) throw new Exception( 'Invalid store name provided' );
       // Define the root path of SleekDB.
-      $this->root = 'system/modules/sleekdb/';
+      $this->root = 'vendors/sleekdb/';
       // Include the config file.
-      $config = include('system/modules/sleekdb/config.php');
+      $config = include('vendors/sleekdb/config.php');
       // Set timeout.
       set_time_limit( $config[ 'timeOut' ] );
       // Define the store path
@@ -72,7 +72,7 @@
     // Returns a new and unique store object ID, by calling this method it would also
     // increment the ID system-wide only for the store.
     private function getStoreId() {
-      $counterPath = 'system/modules/sleekdb/store/system_index/counter.sdb';
+      $counterPath = 'vendors/sleekdb/store/system_index/counter.sdb';
       if ( file_exists( $counterPath ) ) {
         $counter = (int) file_get_contents( $counterPath );
       } else {
@@ -85,7 +85,7 @@
 
     // Return the last created store object ID.
     private function getLastStoreId() {
-      $counterPath = 'system/modules/sleekdb/store/system_index/counter.sdb';
+      $counterPath = 'vendors/sleekdb/store/system_index/counter.sdb';
       if ( file_exists( $counterPath ) ) {
         return (int) file_get_contents( $counterPath );
       } else {
