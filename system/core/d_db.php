@@ -1262,11 +1262,19 @@ class DB
 	}
 
   public function get_table() {
-        $data = $this->pdo->query('show tables')->fetchAll();  
-		foreach ($data as $value) {
-            $a[] = $value['Tables_in_' . database_name];
-        }
-        return $a;
-    }
+		if ($this->database_type == "mysql") {
+			$data = $this->pdo->query('show tables')->fetchAll();  
+			foreach ($data as $value) {
+				$a[] = $value['Tables_in_' . database_name];
+			}
+		}
+		if ($this->database_type == "pgsql") {
+			$data = $this->pdo->query("select * from pg_catalog.pg_tables")->fetchAll();
+			foreach ($data as $value) {
+				$a[] = $value['tablename'];
+			}
+		}
+    return $a;
+  }
 }
 ?>

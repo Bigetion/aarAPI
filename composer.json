@@ -1,0 +1,7 @@
+{
+  "name": "AAR API",
+  "description": "",
+  "require": {
+    "php": "^7.0"
+  }
+}

@@ -2,9 +2,9 @@
 
   namespace SleekDB;
 
-  require_once 'vendors/sleekdb/traits/helpers.php';
-  require_once 'vendors/sleekdb/traits/conditions.php';
-  require_once 'vendors/sleekdb/traits/caching.php';
+  require_once 'vendor/sleekdb/traits/helpers.php';
+  require_once 'vendor/sleekdb/traits/conditions.php';
+  require_once 'vendor/sleekdb/traits/caching.php';
 
   class SleekDB {
 

@@ -1,4 +1,5 @@
 <?php
+require 'vendor/autoload.php';
 error_reporting(-1);
 ini_set('memory_limit', '128M');
 define('INDEX', '');
