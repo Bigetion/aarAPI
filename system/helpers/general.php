@@ -25,4 +25,9 @@ function get_header($header_key){
     }else $headers = false;
     return $headers;
 }
+
+function get_base_dir($dir) {
+    $base_path = str_replace(getcwd(), '', $dir);
+    return str_replace('\\', '/', substr($base_path, 1));
+}
 ?>

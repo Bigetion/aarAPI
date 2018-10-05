@@ -59,15 +59,18 @@
       // If no store object found then return an empty array.
       if ( empty( $storeObjects ) ) return false;
       foreach ( $storeObjects as $data ) {
+        $newData = array();
         foreach ( $updateable as $key => $value ) {
           // Do not update the _id reserved index of a store.
-          if( $key != '_id' ) {
-            $data[ $key ] = $value;
+          if( $key != '_id' && $key != '_hash' ) {
+            $newData[ $key ] = $value;
           }
         }
-        $storePath = $this->storeName . '/' . $data[ '_id' ] . '.json';
+        $storePath = $this->storeName . '/data/' . $data[ '_id' ] . '.json';
         if ( file_exists( $storePath ) ) {
-          file_put_contents( $storePath, json_encode( $data ) );
+          $newData['_hash'] = md5(json_encode( $newData ));
+          $newData['_id'] = $data['_id'];
+          file_put_contents( $storePath, json_encode( $newData ) );
         }
       }
       return true;
@@ -79,10 +82,10 @@
       $storeObjects = $this->findStore();
       if ( ! empty( $storeObjects ) ) {
         foreach ( $storeObjects as $data ) {
-          if ( ! unlink( $this->storeName . '/' . $data[ '_id' ] . '.json' ) ) {
+          if ( ! unlink( $this->storeName . '/data/' . $data[ '_id' ] . '.json' ) ) {
             throw new Exception( 
               'Unable to delete storage file! 
-              Location: "'.$this->storeName . '/' . $data[ '_id' ] . '.json'.'"' 
+              Location: "'.$this->storeName . '/data/' . $data[ '_id' ] . '.json'.'"' 
             );
           }
         }

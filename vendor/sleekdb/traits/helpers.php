@@ -35,6 +35,7 @@
       if ( ! file_exists( $this->storeName ) ) {
         // Create the store directory.
         mkdir( $this->storeName );
+        mkdir( $this->storeName . '/data' );
         // Create the cache directory of this store.
         mkdir( $this->storeName . '/cache' );
       }
@@ -72,7 +73,7 @@
     // Returns a new and unique store object ID, by calling this method it would also
     // increment the ID system-wide only for the store.
     private function getStoreId() {
-      $counterPath = 'vendor/sleekdb/store/system_index/counter.sdb';
+      $counterPath = $this->storeName. '/counter.sdb';
       if ( file_exists( $counterPath ) ) {
         $counter = (int) file_get_contents( $counterPath );
       } else {
@@ -85,7 +86,7 @@
 
     // Return the last created store object ID.
     private function getLastStoreId() {
-      $counterPath = 'vendor/sleekdb/store/system_index/counter.sdb';
+      $counterPath = $this->storeName. '/counter.sdb';
       if ( file_exists( $counterPath ) ) {
         return (int) file_get_contents( $counterPath );
       } else {
@@ -95,7 +96,7 @@
 
     // Get a store by its system id. "_id"
     private function getStoreById( $id ) {
-      $store = $this->storeName . '/' . $id . '.json';
+      $store = $this->storeName . '/data/' . $id . '.json';
       if ( file_exists( $store ) ) {
         $data = json_decode( file_get_contents( $store ), true );
         if ( $data !== false ) return $data;
@@ -202,13 +203,14 @@
       if ( isset( $storeData[ '_id' ] ) ) throw new Exception( 'The _id index is reserved by SleekDB, please delete the _id key and try again' );
       $id = $this->getStoreId();
       // Add the system ID with the store data array.
+      $storeData[ '_hash' ] = md5(json_encode($storeData));
       $storeData[ '_id' ] = $id;
       // Prepare storable data
       $storableJSON = json_encode( $storeData );
       if ( $storableJSON === false ) throw new Exception( 'Unable to encode the data array, 
         please provide a valid PHP associative array' );
       // Define the store path
-      $storePath = $this->storeName . '/' . $id . '.json';
+      $storePath = $this->storeName . '/data/' . $id . '.json';
       if ( ! file_put_contents( $storePath, $storableJSON ) ) {
         throw new Exception( "Unable to write the object file! Please check if PHP has write permission." );
       }

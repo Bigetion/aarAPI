@@ -1,5 +1,4 @@
 <?php
-require 'vendor/autoload.php';
 error_reporting(-1);
 ini_set('memory_limit', '128M');
 define('INDEX', '');
@@ -91,6 +90,9 @@ function &load_class($class) {
 foreach (load_recursive('system') as $value) {
 	require_once($value);
 }
+
+require_once('vendor/autoload.php');
+
 $project = str_replace('-','_',segment(1));
 $controller = str_replace('-','_',segment(2));
 $method = str_replace('-','_',segment(3));
