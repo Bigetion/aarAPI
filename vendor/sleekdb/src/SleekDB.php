@@ -59,7 +59,7 @@
       // If no store object found then return an empty array.
       if ( empty( $storeObjects ) ) return false;
       foreach ( $storeObjects as $data ) {
-        $newData = array();
+        $newData = array_merge(array(), $data);
         foreach ( $updateable as $key => $value ) {
           // Do not update the _id reserved index of a store.
           if( $key != '_id' && $key != '_hash' ) {
@@ -68,6 +68,8 @@
         }
         $storePath = $this->storeName . '/data/' . $data[ '_id' ] . '.json';
         if ( file_exists( $storePath ) ) {
+          unset($newData['_hash']);
+          unset($newData['_id']);
           $newData['_hash'] = md5(json_encode( $newData ));
           $newData['_id'] = $data['_id'];
           file_put_contents( $storePath, json_encode( $newData ) );

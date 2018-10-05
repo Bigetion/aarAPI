@@ -1,20 +1,14 @@
 <?php  if ( ! defined('INDEX')) exit('No direct script access allowed');
 
 class image extends Main {
-    function __construct() {
-        
-    }
-
     function getAll(){
         $this->auth->permission();
         $post_data = $this->render->json_post();
         $image_path = '';
-        $path = 'application/images/featured/thumbs';
+        $path = 'application/images/featured';
         if(isset($post_data['path'])){
             $image_path = $post_data['path'].'/';
             $path = 'application/images/'.$post_data['path'];
-            $this->dir->create_dir($path);
-            $path = $path.'/thumbs';
             $this->dir->create_dir($path);
         }
         $images = load_recursive($path, 0, array('jpg','jpeg','png'));
@@ -36,11 +30,15 @@ class image extends Main {
 		$temp = explode(".", $_FILES["image"]["name"]);
 		
 		$extension = end($temp);
-		
+        $path = 'application/images/featured';
+        
+        if(isset($post_data['path'])){
+            $path = $post_data['path'];
+        }
 		$finfo = finfo_open(FILEINFO_MIME_TYPE);
 		$mime = finfo_file($finfo, $_FILES["image"]["tmp_name"]);
-        $this->dir->create_dir('application/images/featured');
-        $this->dir->create_dir('application/images/featured/thumbs');
+        $this->dir->create_dir($path);
+
 		if ((($mime == "image/gif")
 			|| ($mime == "image/jpeg")
 			|| ($mime == "image/pjpeg")
@@ -48,14 +46,10 @@ class image extends Main {
 			|| ($mime == "image/png"))
 			&& in_array($extension, $allowedExts)) {
 			$name = sha1(microtime()) . "." . $extension;
-			if(move_uploaded_file($_FILES["image"]["tmp_name"], "application/images/featured/" . $name)){
-                try {
-                    $this->imageresize->fromFile("application/images/featured/" . $name)->resize(250)->toFile("application/images/featured/thumbs/" . $name, 'image/jpeg');
-                }
-                catch(Exception $err){
-                    $this->set->error_message($err);
-                }
+			if(move_uploaded_file($_FILES["image"]["tmp_name"], $path . '/' . $name)){
+                $this->set->success_message(true);
             }
+            $this->set->error_message(true);
 		}
 	}
 
@@ -63,14 +57,19 @@ class image extends Main {
         $this->auth->permission();
         $post_data = $this->render->json_post();
         $path = 'application/images/featured';
-        $path_thumb = $path.'/thumbs';
+        
+        if(isset($post_data['path'])){
+            $path = $post_data['path'];
+        }
+
         if(isset($post_data['path']) && isset($post_data['img'])){
             $path = 'application/images/'.$post_data['path'];
-            $path_thumb = $path.'/thumbs';
             $img = $post_data['img'];
-            unlink($path.'/'.$img);
-            unlink($path_thumb.'/'.$img);
+            if(unlink($path.'/'.$img)) {
+                $this->set->success_message(true);
+            }
         }
+        $this->set->error_message(true);
     }
     
     function get(){
