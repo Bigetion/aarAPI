@@ -25,9 +25,9 @@
     // The object is a plaintext JSON document.
     public function insert( $storeData = false ) {
       // Handle invalid data
-      if ( ! $storeData OR empty( $storeData ) ) throw new Exception( 'No data found to store' );
+      if ( ! $storeData OR empty( $storeData ) ) show_error( 'SleekDB Error', 'No data found to store' );
       // Make sure that the data is an array
-      if ( ! is_array( $storeData ) ) throw new Exception( 'Storable data must an array' );
+      if ( ! is_array( $storeData ) ) show_error( 'SleekDB Error', 'Storable data must an array' );
       $storeData = $this->writeInStore( $storeData );
       // Check do we need to wipe the cache for this store.
       if ( $this->deleteCacheOnCreate === true ) {
@@ -39,9 +39,9 @@
     // Creates multiple objects in the store.
     public function insertMany( $storeData = false ) {
       // Handle invalid data
-      if ( ! $storeData OR empty( $storeData ) ) throw new Exception( 'No data found to store' );
+      if ( ! $storeData OR empty( $storeData ) ) show_error( 'SleekDB Error', 'No data found to store' );
       // Make sure that the data is an array
-      if ( ! is_array( $storeData ) ) throw new Exception( 'Storable data must an array' );
+      if ( ! is_array( $storeData ) ) show_error( 'SleekDB Error', 'Storable data must an array' );
       // All results.
       $results = [];
       foreach ( $storeData as $key => $node ) {
@@ -83,16 +83,18 @@
       if ( ! empty( $storeObjects ) ) {
         foreach ( $storeObjects as $data ) {
           if ( ! unlink( $this->storeName . '/data/' . $data[ '_id' ] . '.json' ) ) {
-            throw new Exception( 
+            show_error( 'SleekDB Error', 
               'Unable to delete storage file! 
               Location: "'.$this->storeName . '/data/' . $data[ '_id' ] . '.json'.'"' 
             );
           }
+
         }
+        $this->conditions = array();
         return true;
       } else {
         // Nothing found to delete
-        throw new Exception( 'Invalid store object found, nothing to delete.' );
+        show_error( 'SleekDB Error', 'Invalid store object found, nothing to delete.' );
       }
     }
 

@@ -20,22 +20,18 @@ class categories extends Controller {
 		$post_data = $this->render->json_post();
 		$this->sleekdb->setStore('categories');
 		if($this->sleekdb->store->where( '_id', '=', $post_data['id'] )->update($post_data['data'])) {
-			$this->sleekdb->store->deleteAllCache();
 			$this->set->success_message(true);
 		}
 		$this->set->error_message(true);
 	}
 
 	function submitDelete() {
-        $post_data = $this->render->json_post();
-        $this->sleekdb->setStore('categories');
-        $array = $this->sleekdb->store;
-        foreach($post_data['id'] as $id){
-            $array = $array->where( '_id', '==', $id );
-        }
-        $array->delete();
-        $this->sleekdb->store->deleteAllCache();
-        $this->set->error_message(true);
+		$post_data = $this->render->json_post();
+		$this->sleekdb->setStore('categories');
+		foreach($post_data['id'] as $id){
+			$this->sleekdb->store->where( '_id', '=', $id )->delete();
+		}
+		$this->set->success_message(true);
 	}
 }
 ?>

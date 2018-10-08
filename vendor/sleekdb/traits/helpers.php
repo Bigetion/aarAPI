@@ -9,7 +9,7 @@
 
     // Initialize data that SleekDB required to operate.
     private function init( $storeName ) {
-      if ( ! $storeName OR empty( $storeName ) ) throw new Exception( 'Invalid store name provided' );
+      if ( ! $storeName OR empty( $storeName ) ) show_error( 'SleekDB Error', 'Invalid store name provided' );
       // Define the root path of SleekDB.
       $this->root = 'vendor/sleekdb/';
       // Include the config file.
@@ -27,7 +27,7 @@
       if ( file_exists( $config[ 'storeLocation' ] ) ) {
         $this->storeName = $config[ 'storeLocation' ] . $storeName;
       } else {
-        throw new Exception( 'Unable to create the directories at: ' . $config[ 'storeLocation' ] . ' 
+        show_error( 'SleekDB Error', 'Unable to create the directories at: ' . $config[ 'storeLocation' ] . ' 
           Please create this directory manually and then try again.' );
       }
 
@@ -200,19 +200,19 @@
       // Cast to array
       $storeData = (array) $storeData;
       // Check if it has _id key
-      if ( isset( $storeData[ '_id' ] ) ) throw new Exception( 'The _id index is reserved by SleekDB, please delete the _id key and try again' );
+      if ( isset( $storeData[ '_id' ] ) ) show_error( 'SleekDB Error', 'The _id index is reserved by SleekDB, please delete the _id key and try again' );
       $id = $this->getStoreId();
       // Add the system ID with the store data array.
       $storeData[ '_hash' ] = md5(json_encode($storeData));
       $storeData[ '_id' ] = $id;
       // Prepare storable data
       $storableJSON = json_encode( $storeData );
-      if ( $storableJSON === false ) throw new Exception( 'Unable to encode the data array, 
+      if ( $storableJSON === false ) show_error( 'SleekDB Error', 'Unable to encode the data array, 
         please provide a valid PHP associative array' );
       // Define the store path
       $storePath = $this->storeName . '/data/' . $id . '.json';
       if ( ! file_put_contents( $storePath, $storableJSON ) ) {
-        throw new Exception( "Unable to write the object file! Please check if PHP has write permission." );
+        show_error( 'SleekDB Error', "Unable to write the object file! Please check if PHP has write permission." );
       }
       return $storeData;
     }
@@ -246,7 +246,7 @@
           // If the field do not exists then insert an empty string.
           if ( ! isset( $data[ $i ] ) ) {
             $data = '';
-            throw new Exception( '"'.$i.'" index was not found in the provided data array' );
+            show_error( 'SleekDB Error', '"'.$i.'" index was not found in the provided data array' );
             break;
           } else {
             // The index is valid, collect the data.
