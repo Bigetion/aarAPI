@@ -104,6 +104,18 @@
       return [];
     }
 
+    function getDataWithKeys($keys, $data) {
+      if(count($keys)>0) {
+        $newData = array();
+        foreach($keys as $col) {
+          if(array_key_exists($col, $data)){
+            $newData[$col] = $data[$col];
+          }
+        }
+        return $newData;
+      }
+      return $data;
+    }
 
     // Find store objects with conditions, sorting order, skip and limits.
     private function findStore($keys=array()) {
@@ -111,18 +123,6 @@
       $lastStoreId    = $this->getLastStoreId();
       $searchRank     = [];
 
-      function getDataWithKeys($keys, $data) {
-        if(count($keys)>0) {
-          $newData = array();
-          foreach($keys as $col) {
-            if(array_key_exists($col, $data)){
-              $newData[$col] = $data[$col];
-            }
-          }
-          return $newData;
-        }
-        return $data;
-      }
       // Start collecting and filtering data.
       for ( $i = 0; $i <= $lastStoreId; $i++ ) {
         // Collect data of current iteration.
@@ -131,7 +131,7 @@
           // Filter data found.
           if ( empty( $this->conditions ) ) {
             // Append all data of this store.
-            $found[] = getDataWithKeys($keys, $data);
+            $found[] = $this->getDataWithKeys($keys, $data);
           } else {
             // Append only passed data from this store.
             $storePassed = true;
@@ -172,7 +172,7 @@
             // Check if current store is updatable or not.
             if ( $storePassed === true ) {
               // Append data to the found array.
-              $found[] = getDataWithKeys($keys, $data);
+              $found[] = $this->getDataWithKeys($keys, $data);
             }
           }
         }

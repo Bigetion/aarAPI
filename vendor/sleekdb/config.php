@@ -1,6 +1,6 @@
 <?php
 return array(
     'storeLocation' => 'application/db/',
-    'enableAutoCache' => true,
+    'enableAutoCache' => false,
     'timeOut' => 120,
 );
