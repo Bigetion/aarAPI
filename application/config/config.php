@@ -1,6 +1,6 @@
 <?php
 return array(
-	'base_url'						=> 'http://localhost/aarAPI/',
+	'base_url'						=> 'http://localhost/portalBerita/aarAPI/',
 	'default_app_method'			=> 'index',
 	'default_project'				=> 'page',
 	'default_project_controller'	=> 'home',
