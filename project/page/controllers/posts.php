@@ -48,7 +48,7 @@ class posts extends Controller {
 
 	function submitDelete() {
 		$post_data = $this->render->json_post();
-		if($this->sleekdb->update('posts',[[
+		if($this->sleekdb->delete('posts',[[
 			"condition" => ["_id","=",$post_data['id']]
 		]])) {
 			$this->set->success_message(true);
