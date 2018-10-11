@@ -101,7 +101,7 @@ class sleekdb {
       $data = $this->store->fetch();
       $this->jsonq = new \Nahid\JsonQ\Jsonq();
       $this->jsonq->collect($data);
-      $data = $this->getDataByWhere($where);
+      $data = $this->getDataByWhere($this->jsonq, $where);
     }
     return $this->store->update($updateData, $data);
   }
@@ -114,7 +114,7 @@ class sleekdb {
       $data = $this->store->fetch();
       $this->jsonq = new \Nahid\JsonQ\Jsonq();
       $this->jsonq->collect($data);
-      $data = $this->getDataByWhere($where);
+      $data = $this->getDataByWhere($this->jsonq, $where);
     }
     return $this->store->delete($data);
   }
