@@ -51,9 +51,11 @@
     }
 
     // Updates matched store objects.
-    public function update( $updateable ) {
+    public function update( $updateable,  $objects = array()) {
       // Find all store objects.
       $storeObjects = $this->findStore();
+
+      if(count($objects) > 0) $storeObjects = $objects;
       // If no store object found then return an empty array.
       if ( empty( $storeObjects ) ) return false;
       foreach ( $storeObjects as $data ) {
@@ -77,9 +79,11 @@
     }
 
     // Deletes matched store objects.
-    public function delete() {
+    public function delete($objects = array()) {
       // Find all store objects.
       $storeObjects = $this->findStore();
+
+      if(count($objects) > 0) $storeObjects = $objects;
       if ( ! empty( $storeObjects ) ) {
         foreach ( $storeObjects as $data ) {
           if ( ! unlink( $this->storeName . '/data/' . $data[ '_id' ] . '.json' ) ) {

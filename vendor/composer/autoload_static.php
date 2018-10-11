@@ -6,9 +6,25 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitdae7ca5f624878286283135694a7b894
 {
+    public static $prefixLengthsPsr4 = array (
+        'N' => 
+        array (
+            'Nahid\\JsonQ\\' => 12,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Nahid\\JsonQ\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nahid/jsonq/src',
+        ),
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInitdae7ca5f624878286283135694a7b894::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitdae7ca5f624878286283135694a7b894::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }

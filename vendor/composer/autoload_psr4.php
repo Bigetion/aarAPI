@@ -6,4 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Nahid\\JsonQ\\' => array($vendorDir . '/nahid/jsonq/src'),
 );

@@ -2,6 +2,7 @@
   "name": "AAR API",
   "description": "",
   "require": {
-    "php": "^7.0"
+    "php": "^7.0",
+    "nahid/jsonq": "^5.2"
   }
 }
