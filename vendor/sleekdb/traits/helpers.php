@@ -8,37 +8,37 @@
   trait HelpersTrait {
 
     // Initialize data that SleekDB required to operate.
-    private function init( $storeName ) {
+    private function init( $storeName, $config=array(
+        'storeLocation' => 'application/db/',
+        'enableAutoCache' => false,
+        'timeOut' => 120,
+    )) {
       if ( ! $storeName OR empty( $storeName ) ) show_error( 'SleekDB Error', 'Invalid store name provided' );
-      // Define the root path of SleekDB.
-      $this->root = 'vendor/sleekdb/';
-      // Include the config file.
-      $config = include('vendor/sleekdb/config.php');
       // Set timeout.
       set_time_limit( $config[ 'timeOut' ] );
       // Define the store path
       
       // Validate the directory path.
-      $customStorePath = trim( $config[ 'storeLocation' ] );
+      $storeLocation = trim( $config[ 'storeLocation' ] );
+
       // Handle the directory path ending.
-      if ( substr( $customStorePath, -1 ) !== '/' ) $customStorePath += '/';
+      if ( substr( $storeLocation, -1 ) !== '/' ) $storeLocation += '/';
       
-      // Check if custom store location exists or not.
-      if ( file_exists( $config[ 'storeLocation' ] ) ) {
-        $this->storeName = $config[ 'storeLocation' ] . $storeName;
-      } else {
-        show_error( 'SleekDB Error', 'Unable to create the directories at: ' . $config[ 'storeLocation' ] . ' 
-          Please create this directory manually and then try again.' );
+      $this->storeName = $storeLocation . $storeName;
+
+      if (!is_dir($this->storeName)) {
+        mkdir($this->storeName, 0777, true);
+        chmod($this->storeName, 0777);
+      }
+      if (!is_dir($this->storeName.'/data')) {
+        mkdir($this->storeName.'/data', 0777, true);
+        chmod($this->storeName.'/data', 0777);
+      }
+      if (!is_dir($this->storeName.'/cache')) {
+        mkdir($this->storeName.'/cache', 0777, true);
+        chmod($this->storeName.'/cache', 0777);
       }
 
-      // Create the store if it is no already created.
-      if ( ! file_exists( $this->storeName ) ) {
-        // Create the store directory.
-        mkdir( $this->storeName );
-        mkdir( $this->storeName . '/data' );
-        // Create the cache directory of this store.
-        mkdir( $this->storeName . '/cache' );
-      }
       // Set empty results
       $this->results = [];
       // Set a default limit

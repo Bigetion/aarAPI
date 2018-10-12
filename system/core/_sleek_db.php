@@ -12,6 +12,14 @@ class sleekdb {
     return $this;
   }
 
+  private function setInit($store) {
+    $this->store = new \SleekDB\SleekDB($store, array(
+      'storeLocation' => 'application/db/',
+      'enableAutoCache' => false,
+      'timeOut' => 120,
+    ));
+  }
+
   private function nextAnd($current, $key, $op, $val) {
     return $current->where($key, $op, $val);
   }
@@ -76,7 +84,7 @@ class sleekdb {
   }
 
   public function select($store, $columns = [], $where = false) {
-    $this->store = new \SleekDB\SleekDB($store);
+    $this->setInit($store);
     $data = $this->store->fetch($columns);
     $this->totalRows_ = count($data);
 
@@ -89,12 +97,12 @@ class sleekdb {
   }
 
   public function insert($store, $data) {
-    $this->store = new \SleekDB\SleekDB($store);
+    $this->setInit($store);
     return $this->store->insert($data);
   }
 
   public function update($store, $updateData, $where = false) {
-    $this->store = new \SleekDB\SleekDB($store);
+    $this->setInit($store);
     $data = array();
 
     if($where !== false){
@@ -107,7 +115,7 @@ class sleekdb {
   }
 
   public function delete($store, $where = false) {
-    $this->store = new \SleekDB\SleekDB($store);
+    $this->setInit($store);
     $data = array();
 
     if($where !== false){
