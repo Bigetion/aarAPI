@@ -32,8 +32,8 @@ class image extends Main {
 		$extension = end($temp);
         $path = 'application/images/featured';
         
-        if(isset($post_data['path'])){
-            $path = $post_data['path'];
+        if(isset($_POST['path'])){
+            $path = 'application/images/'.$_POST['path'];
         }
 		$finfo = finfo_open(FILEINFO_MIME_TYPE);
 		$mime = finfo_file($finfo, $_FILES["image"]["tmp_name"]);
