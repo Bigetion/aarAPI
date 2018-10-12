@@ -16,8 +16,7 @@ class tags extends Controller {
 
 	function submitEdit() {
 		$post_data = $this->render->json_post();
-		$this->sleekdb->setStore('tags');
-		if($this->sleekdb->update($post_data['data'], [[
+		if($this->sleekdb->update('tags', $post_data['data'], [[
 			"condition"=>["_id","=",$post_data['id']]
 		]])) {
 			$this->set->success_message(true);

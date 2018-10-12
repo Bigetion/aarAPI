@@ -3,7 +3,6 @@ class posts extends Controller {
 
 	function getData(){
 		$post_data = $this->render->json_post();
-		$this->sleekdb->setStore('posts');
 		$data['posts'] = $this->sleekdb->select('posts');
 		if(isset($post_data['where'])) {
 			$where = $post_data['where'];
@@ -20,7 +19,6 @@ class posts extends Controller {
 
 	function getById() {
 		$post_data = $this->render->json_post();
-		$this->sleekdb->setStore('posts');
 		$data = $this->sleekdb->select('posts', [], [[
 			"condition" => ["_id","=", $post_data['id']]
 		]]);

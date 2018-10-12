@@ -16,8 +16,7 @@ class categories extends Controller {
 
 	function submitEdit() {
 		$post_data = $this->render->json_post();
-		$this->sleekdb->setStore('categories');
-		if($this->sleekdb->update($post_data['data'], [[
+		if($this->sleekdb->update('categories', $post_data['data'], [[
 			"condition"=>["_id","=",$post_data['id']]
 		]])) {
 			$this->set->success_message(true);
