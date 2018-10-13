@@ -25,6 +25,14 @@ class posts extends Controller {
 		$this->render->json($data);
 	}
 
+	function getByTitleSlug() {
+		$post_data = $this->render->json_post();
+		$data = $this->sleekdb->select('posts', [], [[
+			"condition" => ["titleSlug","=", $post_data['slug']]
+		]]);
+		$this->render->json($data);
+	}
+
 	function submitAdd() {
 		$post_data = $this->render->json_post();
 		$data = array_merge(array("featuredImage" => base_url."image/get/featured"),$post_data['data']);
