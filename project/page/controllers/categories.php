@@ -2,7 +2,18 @@
 class categories extends Controller {
 
 	function getData(){
+		$post_data = $this->render->json_post();
 		$data['categories'] = $this->sleekdb->select('categories');
+		if(isset($post_data['where'])) {
+			$where = $post_data['where'];
+			if(isset($where['LIMIT'])) {
+				$limit = $where['LIMIT'];
+				$data['categories'] = $this->sleekdb->select('categories', [], [[
+					"limit" => $limit
+				]]);
+			}
+		}
+		$data['totalRows'] = $this->sleekdb->totalRows();
 		$this->render->json($data);
 	}
 
