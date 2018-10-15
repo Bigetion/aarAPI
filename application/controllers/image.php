@@ -29,7 +29,7 @@ class image extends Main {
 		$allowedExts = array("jpeg", "jpg", "png");
 		$temp = explode(".", $_FILES["image"]["name"]);
 		
-		$extension = end($temp);
+		$extension = strtolower(end($temp));
         $path = 'application/images/featured';
         
         if(isset($_POST['path'])){

@@ -20,15 +20,7 @@ class sleekdb {
     ));
   }
 
-  private function nextAnd($current, $key, $op, $val) {
-    return $current->where($key, $op, $val);
-  }
-
-  private function nextOr($current, $key, $op, $val) {
-    return $current->orWhere($key, $op, $val);
-  }
-
-  private function getDataByWhere($jsonq, $where) {
+  private function getDataByWhere($jsonq, $where = array()) {
     $currentWhere = '';
     $limit = -1;
     $nextCondition = '';
@@ -46,6 +38,9 @@ class sleekdb {
       if(isset($val['limit'])) {
         $limit = $val['limit'];
       }
+      if(isset($val['sortBy'])) {
+        $currentWhere = $jsonq->sortBy($val['sortBy'][0],$val['sortBy'][1]);
+      }
       if(isset($val['condition'])) {
         if($currentWhere == '') {
           $currentWhere = $jsonq->where($val['condition'][0],$val['condition'][1],$val['condition'][2]);
@@ -53,15 +48,15 @@ class sleekdb {
         } else {
           switch ($nextCondition) {
             case 'and':
-              $currentWhere = $this->nextAnd($currentWhere, $val['condition'][0],$val['condition'][1],$val['condition'][2]);
+              $currentWhere = $currentWhere->where($val['condition'][0],$val['condition'][1],$val['condition'][2]);
               $nextCondition = $next;
               break;
             case 'or':
-              $currentWhere = $this->nextOr($currentWhere, $val['condition'][0],$val['condition'][1],$val['condition'][2]);
+              $currentWhere = $currentWhere->orWhere($val['condition'][0],$val['condition'][1],$val['condition'][2]);;
               $nextCondition = $next;
               break;
             default: 
-              $currentWhere = $this->nextAnd($currentWhere, $val['condition'][0],$val['condition'][1],$val['condition'][2]);
+              $currentWhere = $currentWhere->where($val['condition'][0],$val['condition'][1],$val['condition'][2]);
               $nextCondition = $next;
           }
         }
@@ -88,11 +83,10 @@ class sleekdb {
     $data = $this->store->fetch($columns);
     $this->totalRows_ = count($data);
 
-    if($where !== false){
-      $this->jsonq = new \Nahid\JsonQ\Jsonq();
-      $this->jsonq->collect($data);
-      $data = $this->getDataByWhere($this->jsonq, $where);
-    }
+    $this->jsonq = new \Nahid\JsonQ\Jsonq();
+    $this->jsonq->collect($data);
+    $data = $this->getDataByWhere($this->jsonq, $where);
+    
     return $data;
   }
 
