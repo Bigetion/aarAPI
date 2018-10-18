@@ -33,7 +33,7 @@ class sleekdb {
     });
 
     $jsonq->macro('~', function($text, $val) {
-      return stripos($text, $val) >= 0;
+      return stripos($text, $val) !== false;
     });
 
     foreach($where as $val) {
