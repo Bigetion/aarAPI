@@ -32,6 +32,10 @@ class sleekdb {
       return count($result) > 0;
     });
 
+    $jsonq->macro('~', function($text, $val) {
+      return stripos($text, $val) >= 0;
+    });
+
     foreach($where as $val) {
       $next = 'and';
       if(isset($val['next'])) $next = $val['next'];
