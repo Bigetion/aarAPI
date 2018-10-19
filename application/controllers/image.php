@@ -128,6 +128,13 @@ class image extends Main {
         $type = pathinfo($fileOut, PATHINFO_EXTENSION);
         $img = file_get_contents($fileOut);
         $data['base64'] = 'data:image/' . $type . ';base64,' . base64_encode($img);
+        if(isset($_GET['w']) && isset($_GET['h'])){
+            $data['base64'] = $this->imageresize->fromFile($fileOut)->resize($_GET['w'],$_GET['h'])->toDataUri();
+        }else if(isset($_GET['w'])){
+            $data['base64'] = $this->imageresize->fromFile($fileOut)->resize($_GET['w'])->toDataUri();
+        }else if(isset($_GET['h'])){
+            $data['base64'] = $this->imageresize->fromFile($fileOut)->resize(false,$_GET['h'])->toDataUri();
+        }
         $this->render->json($data);
     }
 }    
