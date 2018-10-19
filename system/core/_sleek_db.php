@@ -36,6 +36,17 @@ class sleekdb {
       return stripos($text, $val) !== false;
     });
 
+    $jsonq->macro('inarray', function($data, $val) {
+      return in_array($val, $data, true);
+    });
+
+    $jsonq->macro('inarraycontains', function($data, $val) {
+      foreach($data as $item) {
+        if (stripos($val,$item) !== false) return true;
+      }
+      return false;
+    });
+
     foreach($where as $val) {
       $next = 'and';
       if(isset($val['next'])) $next = $val['next'];
