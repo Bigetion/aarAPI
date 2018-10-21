@@ -35,7 +35,14 @@ class posts extends Controller {
 
 	function submitAdd() {
 		$post_data = $this->render->json_post();
-		$data = array_merge(array("featuredImage" => base_url."image/get/featured", "created" => date('Y-m-d H:i:s')),$post_data['data']);
+		$data = array_merge(array("featuredImage" => base_url."image/get/featured"));
+
+		if(isset($post_data['draft'])) {
+			$draft = $post_data['draft'];
+			if($draft !== false) {
+				$data = array_merge(array("created" => date('Y-m-d H:i:s')),$data);
+			}
+		}
 		if($this->sleekdb->insert('posts',$data)) {
 			$this->set->success_message(true);
 		}
