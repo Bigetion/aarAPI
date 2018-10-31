@@ -38,7 +38,7 @@ class posts extends Controller {
 		$data = array_merge(array("featuredImage" => base_url."image/get/featured"), $post_data['data']);
 		if(isset($data['draft'])) {
 			$draft = $data['draft'];
-			if($draft !== false) {
+			if($draft === false) {
 				$data = array_merge(array("created" => date('Y-m-d H:i:s')), $data);
 			}
 		}
