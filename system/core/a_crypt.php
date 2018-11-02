@@ -77,70 +77,6 @@ class Crypt {
 		}	
 		return $arr_acm;	
 	}
-
-	function acm_coordinat($var_p = 234, $var_q = 567, $var_l = 10, $is_encrypt=true) {
-		function bigToInteger($int) {
-				return (int)($int->toString());
-		}
-		function getMX($x, $y, $p, $n) {
-				$bigOne = new BigInteger(1);
-				$bigX = new BigInteger($x);
-				$bigY = new BigInteger($y);
-				$bigP = new BigInteger($p);
-				$bigN = new BigInteger($n);
-				$bigOneX = $bigOne->multiply($bigX);
-				$bigPY = $bigP->multiply($bigY);
-				$bigMX = $bigOneX->add($bigPY);
-				$bigMX = $bigMX->modPow($bigOne, $bigN);
-				return $bigMX->toString();
-		}
-		function getMY($x, $y, $p, $q, $n) {
-				$bigOne = new BigInteger(1);
-				$bigX = new BigInteger($x);
-				$bigY = new BigInteger($y);
-				$bigP = new BigInteger($p);
-				$bigQ = new BigInteger($q);
-				$bigN = new BigInteger($n);
-				$bigQX = $bigQ->multiply($bigX);
-				$bigPQY = $bigP->multiply($bigQ)->add($bigOne)->multiply($bigY);
-				$bigMY = $bigQX->add($bigPQY);
-				$bigMY = $bigMY->modPow($bigOne, $bigN);
-				return $bigMY->toString();
-		}
-		function getMS($mx, $my, $n) {
-				$bigMX = new BigInteger($mx);
-				$bigMY = new BigInteger($my);
-				$bigN = new BigInteger($n);
-				return $bigN->multiply($bigMX)->add($bigMY)->toString();
-		}
-
-		$p = new BigInteger($var_p);
-		$q = new BigInteger($var_q);
-		$l = new BigInteger($var_l + 1);
-		$n = (int)(sqrt(bigToInteger($l)) + 1);
-		
-		$acm = array();
-		$h = 0;
-		for($x=1;$x<=$n;$x++){
-				for($y=1;$y<=$n;$y++){
-						$mx = getMX($x, $y, $p, $n);
-						$my = getMY($x, $y, $p, $q, $n);
-						$ms = getMS($mx, $my, $n);
-
-						if($is_encrypt === true) {
-								if($ms < $l && $ms > 0 ) {
-										$acm[] = $ms-1;
-								}
-						} else {
-								if($ms < $l && $ms > 0 ) {
-										$acm[(int)$ms - 1] = $h;
-										$h++;
-								}
-						}
-				}
-		}
-		return $acm;
-	}
 	
 	private function acm_encrypt_coordinat($p,$q,$maks_offset){
 		$arr_acm = array();	
@@ -210,6 +146,73 @@ class Crypt {
 			$arr_result[$i] = $arr_str[$acm[$i]];
 		}
 		return implode('',$arr_result);
+	}
+
+	private function big_to_integer($int) {
+		return (int)($int->toString());
+	}
+
+	private function get_mx($x, $y, $p, $n) {
+		$bigOne = new BigInteger(1);
+		$bigX = new BigInteger($x);
+		$bigY = new BigInteger($y);
+		$bigP = new BigInteger($p);
+		$bigN = new BigInteger($n);
+		$bigOneX = $bigOne->multiply($bigX);
+		$bigPY = $bigP->multiply($bigY);
+		$bigMX = $bigOneX->add($bigPY);
+		$bigMX = $bigMX->modPow($bigOne, $bigN);
+		return $bigMX->toString();
+	}
+
+	private function get_my($x, $y, $p, $q, $n) {
+		$bigOne = new BigInteger(1);
+		$bigX = new BigInteger($x);
+		$bigY = new BigInteger($y);
+		$bigP = new BigInteger($p);
+		$bigQ = new BigInteger($q);
+		$bigN = new BigInteger($n);
+		$bigQX = $bigQ->multiply($bigX);
+		$bigPQY = $bigP->multiply($bigQ)->add($bigOne)->multiply($bigY);
+		$bigMY = $bigQX->add($bigPQY);
+		$bigMY = $bigMY->modPow($bigOne, $bigN);
+		return $bigMY->toString();
+	}
+	
+	private function get_ms($mx, $my, $n) {
+		$bigMX = new BigInteger($mx);
+		$bigMY = new BigInteger($my);
+		$bigN = new BigInteger($n);
+		return $bigN->multiply($bigMX)->add($bigMY)->toString();
+	}
+
+	function acm_coordinat($var_p = 234, $var_q = 567, $var_l = 10, $is_encrypt=true) {
+		$p = new BigInteger($var_p);
+		$q = new BigInteger($var_q);
+		$l = new BigInteger($var_l + 1);
+		$n = (int)(sqrt($this->big_to_integer($l)) + 1);
+		
+		$acm = array();
+		$h = 0;
+		for($x=1;$x<=$n;$x++){
+			for($y=1;$y<=$n;$y++){
+				$mx = $this->get_mx($x, $y, $p, $n);
+				$my = $this->get_my($x, $y, $p, $q, $n);
+				$ms = $this->get_ms($mx, $my, $n);
+
+				if($is_encrypt === true) {
+					if($ms < $l && $ms > 0 ) {
+						$acm[] = $ms-1;
+					}
+				} else {
+					if($ms < $l && $ms > 0 ) {
+						$acm[(int)$ms - 1] = $h;
+						$h++;
+					}
+				}
+			}
+		}
+		return $acm;
 	}
 
 	function acm_rand_encrypt($str, $key, $p=8279, $q=6371){

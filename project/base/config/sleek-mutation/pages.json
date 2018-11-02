@@ -1,0 +1,15 @@
+{
+  "store": "pages",
+  "roles": {
+    "insert": [1],
+    "update": [1],
+    "delete": [1]
+  },
+  "fields": [{
+    "id": "title"
+  },{
+    "id": "titleSlug"
+  },{
+    "id": "content"
+  }]
+}

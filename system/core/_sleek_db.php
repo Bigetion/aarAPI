@@ -47,32 +47,34 @@ class sleekdb {
       return false;
     });
 
-    foreach($where as $val) {
-      $next = 'and';
-      if(isset($val['next'])) $next = $val['next'];
-      if(isset($val['limit'])) {
-        $limit = $val['limit'];
-      }
-      if(isset($val['sortBy'])) {
-        $currentWhere = $jsonq->sortBy($val['sortBy'][0],$val['sortBy'][1]);
-      }
-      if(isset($val['condition'])) {
-        if($currentWhere == '') {
-          $currentWhere = $jsonq->where($val['condition'][0],$val['condition'][1],$val['condition'][2]);
-          $nextCondition = $next;
-        } else {
-          switch ($nextCondition) {
-            case 'and':
-              $currentWhere = $currentWhere->where($val['condition'][0],$val['condition'][1],$val['condition'][2]);
-              $nextCondition = $next;
-              break;
-            case 'or':
-              $currentWhere = $currentWhere->orWhere($val['condition'][0],$val['condition'][1],$val['condition'][2]);;
-              $nextCondition = $next;
-              break;
-            default: 
-              $currentWhere = $currentWhere->where($val['condition'][0],$val['condition'][1],$val['condition'][2]);
-              $nextCondition = $next;
+    if(is_array($where)){
+      foreach($where as $val) {
+        $next = 'and';
+        if(isset($val['next'])) $next = $val['next'];
+        if(isset($val['limit'])) {
+          $limit = $val['limit'];
+        }
+        if(isset($val['sortBy'])) {
+          $currentWhere = $jsonq->sortBy($val['sortBy'][0],$val['sortBy'][1]);
+        }
+        if(isset($val['condition'])) {
+          if($currentWhere == '') {
+            $currentWhere = $jsonq->where($val['condition'][0],$val['condition'][1],$val['condition'][2]);
+            $nextCondition = $next;
+          } else {
+            switch ($nextCondition) {
+              case 'and':
+                $currentWhere = $currentWhere->where($val['condition'][0],$val['condition'][1],$val['condition'][2]);
+                $nextCondition = $next;
+                break;
+              case 'or':
+                $currentWhere = $currentWhere->orWhere($val['condition'][0],$val['condition'][1],$val['condition'][2]);;
+                $nextCondition = $next;
+                break;
+              default: 
+                $currentWhere = $currentWhere->where($val['condition'][0],$val['condition'][1],$val['condition'][2]);
+                $nextCondition = $next;
+            }
           }
         }
       }
