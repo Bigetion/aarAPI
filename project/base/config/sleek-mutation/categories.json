@@ -1,5 +1,5 @@
 {
-  "store": "pages",
+  "store": "categories",
   "roles": {
     "insert": [1],
     "update": [1],
@@ -8,10 +8,8 @@
   "fields": [{
     "id": "_id"
   },{
-    "id": "title"
+    "id": "name"
   },{
-    "id": "titleSlug"
-  },{
-    "id": "content"
+    "id": "description"
   }]
 }
