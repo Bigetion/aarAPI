@@ -6,8 +6,6 @@
     "delete": [1]
   },
   "fields": [{
-    "id": "_id"
-  },{
     "id": "name"
   },{
     "id": "description"

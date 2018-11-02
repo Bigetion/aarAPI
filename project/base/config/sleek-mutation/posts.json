@@ -6,8 +6,6 @@
     "delete": [1]
   },
   "fields": [{
-    "id": "_id"
-  },{
     "id": "title"
   },{
     "id": "titleSlug"
@@ -24,8 +22,10 @@
   },{
     "id": "featuredImage"
   },{
-    "id": "createdAt"
+    "id": "createdAt",
+    "parent_id": "draft"
   },{
-    "id": "updatedAt"
+    "id": "updatedAt",
+    "parent_id": "draft"
   }]
 }

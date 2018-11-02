@@ -1,0 +1,6 @@
+{
+  "query": [{
+    "store": "posts",
+    "keys": []
+  }]
+}

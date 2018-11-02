@@ -1,0 +1,6 @@
+{
+  "query": [{
+    "store": "categories",
+    "keys": ["_id","name","description"]
+  }]
+}

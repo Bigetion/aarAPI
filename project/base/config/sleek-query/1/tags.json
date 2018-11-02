@@ -1,0 +1,6 @@
+{
+  "query": [{
+    "store": "tags",
+    "keys": ["_id","name","description"]
+  }]
+}
