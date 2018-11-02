@@ -1,1 +1,1 @@
-[]
+{"getData":{"validation":{"name":"required"}},"executeMutation":{"validation":{"name":"required","type":"required"}}}
