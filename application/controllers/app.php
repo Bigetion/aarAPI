@@ -60,5 +60,10 @@ class App extends Main {
         }
         $this->render->json($data);
     }
+
+    function getLocationInfo() {
+        header('Content-Type: application/json');
+        echo file_get_contents("https://ipinfo.io/");
+    }
 }    
 ?>
