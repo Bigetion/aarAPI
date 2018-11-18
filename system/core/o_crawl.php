@@ -19,7 +19,9 @@ class crawl
                 $obj[$attribute->name] = $attribute->value;
             }
             $i = 0;
+            $innerHTML = "";
             foreach ($element->childNodes as $subElement) {
+                $innerHTML .= $element->ownerDocument->saveHTML($subElement);
                 if ($subElement->nodeType == XML_TEXT_NODE) {
                     $obj["html"] = $subElement->wholeText;
                 } else {
@@ -27,6 +29,7 @@ class crawl
                 }
                 $i += 1;
             }
+            if($level != "0") $obj["innerHTML"] = $innerHTML;
         }
         $this->tags[] = $obj;
         return $obj;
