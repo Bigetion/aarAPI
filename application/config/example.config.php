@@ -5,6 +5,7 @@ return array(
 	'default_project'				=> 'page',
 	'default_project_controller'	=> 'home',
 	'default_project_method'		=> 'index',
-	'secret_key'					=> '123456789'
+	'secret_key'					=> '123456789',
+	'allowed_origin' => '*',
 )
 ?>
