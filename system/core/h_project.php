@@ -14,28 +14,20 @@ class Project {
 		$auto->set_autotable();
     }
     
-    function origin_authenticate(){
-        $http_origin = $_SERVER['HTTP_ORIGIN'];
-        if (strpos(base_url, $http_origin) !== false) {
-            
-        }else{
-            if(defined('allowed_origin')){
-                if(allowed_origin!='*'){
-                    if($http_origin==allowed_origin){} else {
-                        $http_origin_explode = explode('|',allowed_origin);
-                        if(count($http_origin_explode)>1){
-                            if(in_array($http_origin, $http_origin_explode)){
+    function origin_authenticate($allowed_origin = array()){
+        $headers = getallheaders();
 
-                            }else{
-                                show_error('Permission','Origin unauthorized');    
-                            }
-                        }else{
-                            show_error('Permission','Origin unauthorized');
-                        }
+        if (array_key_exists("Origin", $headers)) {
+            if (is_string($allowed_origin)) {
+                if ($allowed_origin != "*") {
+                    if ($headers["Origin"] != $allowed_origin) {
+                        show_error('Permission', 'Origin unauthorized');
                     }
                 }
-            }else{
-                show_error('Permission','Origin unauthorized');
+            } else if (is_array($allowed_origin)) {
+                if (!in_array($headers["Origin"], $allowed_origin)) {
+                    show_error('Permission', 'Origin unauthorized');
+                }
             }
         }
     }
@@ -154,6 +146,11 @@ class Project {
     }
 
     function render() {
+        if (defined('allowed_origin')) {
+            $this->origin_authenticate(allowed_origin);
+        } else {
+            $this->origin_authenticate('-');
+        }
 		$this->set_user();
         if (empty($this->project) && empty($this->controller)) {
             if (!$this->is_exist_project(default_project)) 
@@ -223,8 +220,6 @@ class Project {
 		if(in_array($controller,$base_directory)){
 			show_error('Permission', 'You dont have permission to access this page');	
         }
-
-        // $this->origin_authenticate();
 
         $Render = & load_class($controller);
         if (method_exists($controller, $method)){
