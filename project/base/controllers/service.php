@@ -138,11 +138,13 @@ class service extends Controller {
 				if(is_array($post_data['data'])){
 					$array_keys = array_keys($post_data['data']);
 					if($array_keys[0] === 0){
+						$input_data = array();
 						foreach($array_keys as $key) {
-							$input_data = getInputData($post_data['data'][$key], $json_data['fields']);
-							$this->db->insert($table, $input_data);
+							$input_data[] = getInputData($post_data['data'][$key], $json_data['fields']);
 						}
-						$this->set->success_message(true);
+						if($this->db->insert($table, $input_data)) {
+							$this->set->success_message(true);
+						}
 					} else {
 						$input_data = getInputData($post_data['data'], $json_data['fields']);
 						if($this->db->insert($table, $input_data)){
