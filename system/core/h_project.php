@@ -225,7 +225,7 @@ class Project {
         if (method_exists($controller, $method)){
 			if($this->is_project) {
 				if(method_exists(default_project_controller,"__global")){
-					$Render->load->url(default_project."/".default_project_controller."/__global");	
+					$Render->__global();
                 }
                 $this->params_validation('project/'.$this->project.'/params/'.$controller.'.json');
 			}else{
