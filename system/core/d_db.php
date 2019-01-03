@@ -1262,6 +1262,7 @@ class DB
 	}
 
   public function get_table() {
+		$a = array();
 		if ($this->database_type == "mysql") {
 			$data = $this->pdo->query('show tables')->fetchAll();  
 			foreach ($data as $value) {
