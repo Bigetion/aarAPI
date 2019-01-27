@@ -19,8 +19,11 @@ class tree extends Controller {
 			$json_data = $json_data['query'];
 			$table = $json_data['table'];
 			$column = $json_data['column'];
-			$where = $post_data['where'];
-	
+						
+			$where = array();
+			if(isset($post_data['where'])) {
+				$where = $post_data['where'];
+			}
 			if(isset($json_data['join'])){
 				$join = $json_data['join'];
 				$data['data'] = $this->db->select($table, $join, $column, $where);
