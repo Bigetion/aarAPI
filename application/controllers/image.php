@@ -45,7 +45,12 @@ class image extends Main {
 			|| ($mime == "image/x-png")
 			|| ($mime == "image/png"))
 			&& in_array($extension, $allowedExts)) {
-			$name = sha1(microtime()) . "." . $extension;
+            $name = sha1(microtime()) . "." . $extension;
+            
+            if(isset($_POST['filename'])){
+                $name = $_POST['filename'] . "." . $extension;
+            }
+
 			if(move_uploaded_file($_FILES["image"]["tmp_name"], $path . '/' . $name)){
                 $this->set->success_message(true);
             }
