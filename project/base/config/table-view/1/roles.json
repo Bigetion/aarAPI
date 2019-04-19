@@ -1,0 +1,26 @@
+{
+  "title": "Roles",
+  "primary_key": "id_role",
+  "columns": [{
+    "text": "Role Name",
+    "value": "role_name",
+    "sortable": true,
+    "align": "left"
+  },{
+    "text": "Description",
+    "value": "description",
+    "sortable": true,
+    "align": "left"
+  }],
+  "query": {
+    "table": "roles",
+    "column": [
+      "roles.id_role",
+      "roles.role_name",
+      "roles.description"
+    ],
+    "where": {
+      "id_role[!]": 2
+    }
+  }
+}
