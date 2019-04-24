@@ -11,5 +11,6 @@
     "id": "titleSlug"
   },{
     "id": "content"
-  }]
+  }],
+  "uniq_id": ["titleSlug"]
 }

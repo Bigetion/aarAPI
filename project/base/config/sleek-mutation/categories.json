@@ -9,5 +9,6 @@
     "id": "name"
   },{
     "id": "description"
-  }]
+  }],
+  "uniq_id": ["name"]
 }

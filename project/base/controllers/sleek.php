@@ -52,6 +52,7 @@ class sleek extends Controller {
 		$post_data = $this->render->json_post();
 		$name = $post_data['name'];
 		$type = $post_data['type'];
+		$uniq_id = array();
 
 		$json_data = null;
 		if(file_exists('project/base/config/sleek-mutation/'.$name.'.json')){
@@ -61,6 +62,9 @@ class sleek extends Controller {
 		}
 
 		$store = $json_data['store'];
+		if(isset($json_data['uniq_id'])){
+			$uniq_id = $json_data['uniq_id'];
+		}
 		
 		function getInputData($my_data, $my_fields, $type) {
 			$input_data = array();
@@ -88,14 +92,51 @@ class sleek extends Controller {
 					if($array_keys[0] === 0){
 						foreach($array_keys as $key) {
 							$input_data = getInputData($post_data['data'][$key], $json_data['fields'], $type);
-							$this->sleekdb->insert($store, $input_data);
+
+							$hash = md5(json_encode( $input_data ));
+							$tmpData = $this->sleekdb->select($store, [], [[
+								"condition" => ["_hash","=",$hash]
+							]]);							
+							$condition = [];
+							foreach($uniq_id as $id) {
+								if(isset($input_data[$id])) {
+									$condition[] = [
+										"condition" => [$id,"=",$input_data[$id]],
+										"next" => "or"
+									];
+								}
+							}
+							$tmpData2 = $this->sleekdb->select($store, [], $condition);
+							if(count($tmpData) === 0) {
+								if(count($tmpData2) === 0) {
+									$this->sleekdb->insert($store, $input_data);
+								}
+							}
 						}
 						$this->set->success_message(true);
 					} else {
 						$input_data = getInputData($post_data['data'], $json_data['fields'], $type);
-						if($this->sleekdb->insert($store, $input_data)){
-							$this->set->success_message(true);
+						
+						$hash = md5(json_encode( $input_data ));
+						$tmpData = $this->sleekdb->select($store, [], [[
+							"condition" => ["_hash","=",$hash]
+						]]);							
+						$condition = [];
+						foreach($uniq_id as $id) {
+							if(isset($input_data[$id])) {
+								$condition[] = [
+									"condition" => [$id,"=",$input_data[$id]],
+									"next" => "or"
+								];
+							}
 						}
+						$tmpData2 = $this->sleekdb->select($store, [], $condition);
+						if(count($tmpData) === 0) {
+							if(count($tmpData2) === 0) {
+								$this->sleekdb->insert($store, $input_data);
+							}
+						}
+						$this->set->success_message(true);
 					}
 				}
 			}
