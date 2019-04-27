@@ -1,6 +1,13 @@
 {
   "query": [{
     "store": "posts",
-    "keys": []
+    "keys": [],
+    "join": {
+      "categories": ["categories_data", {
+        "store": "categories",
+        "keys": [],
+        "condition": ["_id","in","base_value"]
+      }]
+    }
   }]
 }

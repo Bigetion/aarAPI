@@ -20,8 +20,8 @@ class sleek extends Controller {
 					$where = array();
 					
 					$tmpData = $this->sleekdb->select($store, $keys, $where);
-					$tmpTotalRows = $this->sleekdb->totalRows();
-					
+					$tmpTotalRows = $this->sleekdb->totalRows();					
+
 					if(isset($post_data['options'])){
 						if(isset($post_data['options'][$key])){
 							$options = $post_data['options'][$key];
@@ -41,6 +41,25 @@ class sleek extends Controller {
 							$tmpData = $this->sleekdb->select($store, $keys, $where);
 						};
 					}
+
+					if(isset($q['join'])) {
+						foreach($q['join'] as $jKey => $join) {
+							$fieldName = $join[0];
+							$joinObj = $join[1];
+
+							$joinStore = $joinObj['store'];
+							$joinKeys = $joinObj['keys'];
+
+							foreach($tmpData as $tKey => $row) {
+								$conditionVal = [$joinObj['condition'][0],$joinObj['condition'][1],$row[$jKey]];
+								$joinWhere = [["condition" => $conditionVal]];
+								$joinData = $this->sleekdb->select($joinStore, $joinKeys, $joinWhere);
+								$tmpData[$tKey][$fieldName] = $joinData;
+							}
+							print_r($tmpData);
+						}
+					}
+
 					$data['data'][] = array("rows" => $tmpData, "total" => $tmpTotalRows);
 				}
 			}
