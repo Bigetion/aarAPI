@@ -56,7 +56,6 @@ class sleek extends Controller {
 								$joinData = $this->sleekdb->select($joinStore, $joinKeys, $joinWhere);
 								$tmpData[$tKey][$fieldName] = $joinData;
 							}
-							print_r($tmpData);
 						}
 					}
 
