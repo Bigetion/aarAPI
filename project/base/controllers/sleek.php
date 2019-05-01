@@ -1,5 +1,35 @@
 <?php  if ( ! defined('INDEX')) exit('No direct script access allowed');
 class sleek extends Controller {
+
+	private function setJoinData($tmpData, $qJoin) {
+		foreach($qJoin as $jKey => $join) {
+			$joinId = $join[0];
+			$joinObj = $join[1];
+
+			$store = $joinObj['store'];
+			$keys = $joinObj['keys'];
+
+			foreach($tmpData as $tKey => $row) {
+				$condition = '=';
+				if(is_array($row[$jKey])) {
+					$array_keys = array_keys($row[$jKey]);
+					if($array_keys[0] === 0){
+						$condition = 'in';
+					}
+				}
+				$conditionVal = [$joinId,$condition,$row[$jKey]];
+				$joinWhere = [["condition" => $conditionVal]];
+				$joinData = $this->sleekdb->select($store, $keys, $joinWhere);
+
+				if(isset($joinObj['join'])) {
+					$joinData = $this->setJoinData($joinData, $joinObj['join']);
+				}
+				$tmpData[$tKey][$jKey."_joindata"] = $joinData;
+			}
+		}
+		return $tmpData;
+	}
+
 	function getData(){
 		$post_data = $this->render->json_post();
 		$name = $post_data['name'];
@@ -43,20 +73,7 @@ class sleek extends Controller {
 					}
 
 					if(isset($q['join'])) {
-						foreach($q['join'] as $jKey => $join) {
-							$fieldName = $join[0];
-							$joinObj = $join[1];
-
-							$joinStore = $joinObj['store'];
-							$joinKeys = $joinObj['keys'];
-
-							foreach($tmpData as $tKey => $row) {
-								$conditionVal = [$joinObj['condition'][0],$joinObj['condition'][1],$row[$jKey]];
-								$joinWhere = [["condition" => $conditionVal]];
-								$joinData = $this->sleekdb->select($joinStore, $joinKeys, $joinWhere);
-								$tmpData[$tKey][$fieldName] = $joinData;
-							}
-						}
+						$tmpData = $this->setJoinData($tmpData, $q['join']);
 					}
 
 					$data['data'][] = array("rows" => $tmpData, "total" => $tmpTotalRows);

@@ -3,10 +3,9 @@
     "store": "posts",
     "keys": [],
     "join": {
-      "categories": ["categories_data", {
+      "categories": ["_id", {
         "store": "categories",
-        "keys": [],
-        "condition": ["_id","in","base_value"]
+        "keys": []
       }]
     }
   }]
