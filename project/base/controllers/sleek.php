@@ -1,7 +1,7 @@
 <?php  if ( ! defined('INDEX')) exit('No direct script access allowed');
 class sleek extends Controller {
 
-	private function setJoinData($tmpData, $qJoin) {
+	private function getJoinData($tmpData, $qJoin) {
 		foreach($qJoin as $jKey => $join) {
 			$joinId = $join[0];
 			$joinObj = $join[1];
@@ -22,7 +22,7 @@ class sleek extends Controller {
 				$joinData = $this->sleekdb->select($store, $keys, $joinWhere);
 
 				if(isset($joinObj['join'])) {
-					$joinData = $this->setJoinData($joinData, $joinObj['join']);
+					$joinData = $this->getJoinData($joinData, $joinObj['join']);
 				}
 				$tmpData[$tKey][$jKey."_joindata"] = $joinData;
 			}
@@ -73,7 +73,7 @@ class sleek extends Controller {
 					}
 
 					if(isset($q['join'])) {
-						$tmpData = $this->setJoinData($tmpData, $q['join']);
+						$tmpData = $this->getJoinData($tmpData, $q['join']);
 					}
 
 					$data['data'][] = array("rows" => $tmpData, "total" => $tmpTotalRows);
