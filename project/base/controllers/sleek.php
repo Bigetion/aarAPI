@@ -10,21 +10,23 @@ class sleek extends Controller {
 			$keys = $joinObj['keys'];
 
 			foreach($tmpData as $tKey => $row) {
-				$condition = '=';
-				if(is_array($row[$jKey])) {
-					$array_keys = array_keys($row[$jKey]);
-					if($array_keys[0] === 0){
-						$condition = 'in';
+				if(isset($row[$jKey])) {
+					$condition = '=';
+					if(is_array($row[$jKey])) {
+						$array_keys = array_keys($row[$jKey]);
+						if($array_keys[0] === 0){
+							$condition = 'in';
+						}
 					}
-				}
-				$conditionVal = [$joinId,$condition,$row[$jKey]];
-				$joinWhere = [["condition" => $conditionVal]];
-				$joinData = $this->sleekdb->select($store, $keys, $joinWhere);
+					$conditionVal = [$joinId,$condition,$row[$jKey]];
+					$joinWhere = [["condition" => $conditionVal]];
+					$joinData = $this->sleekdb->select($store, $keys, $joinWhere);
 
-				if(isset($joinObj['join'])) {
-					$joinData = $this->getJoinData($joinData, $joinObj['join']);
+					if(isset($joinObj['join'])) {
+						$joinData = $this->getJoinData($joinData, $joinObj['join']);
+					}
+					$tmpData[$tKey][$jKey."_joindata"] = $joinData;
 				}
-				$tmpData[$tKey][$jKey."_joindata"] = $joinData;
 			}
 		}
 		return $tmpData;
