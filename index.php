@@ -98,6 +98,6 @@ $controller = str_replace('-','_',segment(2));
 $method = str_replace('-','_',segment(3));
 $CONFIG = & load_class('Project');
 session_start();
-if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) ob_start("ob_gzhandler"); else ob_start();
+ob_start();
 $CONFIG->set_project($project)->set_controller($controller)->set_method($method)->render();
 ?>
