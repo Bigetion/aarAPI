@@ -22,11 +22,9 @@
   },{
     "id": "featuredImage"
   },{
-    "id": "createdAt",
-    "parent_id": "draft"
+    "id": "createdAt"
   },{
-    "id": "updatedAt",
-    "parent_id": "draft"
+    "id": "updatedAt"
   }],
   "uniq_id": ["titleSlug"]
 }
