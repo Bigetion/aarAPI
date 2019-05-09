@@ -98,8 +98,8 @@ class sleek extends Controller {
 						$tmpData = $this->getJoinData($tmpData, $q['join']);
 					}
 
-					if(isset($q['relation'])) {
-						$tmpData = $this->getRelationData($tmpData, $q['relation']);
+					if(isset($q['related_to'])) {
+						$tmpData = $this->getRelationData($tmpData, $q['related_to']);
 					}
 
 					$data['data'][] = array("rows" => $tmpData, "total" => $tmpTotalRows);

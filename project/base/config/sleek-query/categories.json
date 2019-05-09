@@ -2,7 +2,7 @@
   "query": [{
     "store": "categories",
     "keys": ["_id", "name", "description"],
-    "relation": {
+    "related_to": {
       "posts": ["_id", "categories"]
     }
   }]
