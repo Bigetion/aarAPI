@@ -18,7 +18,7 @@ class sleek extends Controller {
 							$condition = 'in';
 						}
 					}
-					$conditionVal = [$joinId,$condition,$row[$jKey]];
+					$conditionVal = [$joinId, $condition, $row[$jKey]];
 					$joinWhere = [["condition" => $conditionVal]];
 					$joinData = $this->sleekdb->select($store, $keys, $joinWhere);
 
