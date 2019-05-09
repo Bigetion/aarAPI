@@ -1,6 +1,9 @@
 {
   "query": [{
     "store": "categories",
-    "keys": ["_id","name","description"]
+    "keys": ["_id", "name", "description"],
+    "relation": {
+      "posts": ["_id", "categories"]
+    }
   }]
 }

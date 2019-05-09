@@ -32,6 +32,26 @@ class sleek extends Controller {
 		return $tmpData;
 	}
 
+	private function getRelationData($tmpData, $qRelation) {
+		foreach($qRelation as $rKey => $relation) {
+			$relationId = $relation[0];
+			$relationKey = $relation[1];
+
+			foreach($tmpData as $tKey => $row) {
+				$relationData = $this->sleekdb->select($rKey, ["_id", $relationKey], [
+					["condition" => [$relationKey, "=", $row[$relationId]], "next" => "or"],
+					["condition" => [$relationKey, "inarray", $row[$relationId]]]
+				]);
+				$relationDataId = array();
+				foreach($relationData as $rRow) {
+					$relationDataId[] = $rRow["_id"];
+				}
+				$tmpData[$tKey][$rKey] = $relationDataId;
+			}
+		}
+		return $tmpData;
+	}
+
 	function getData(){
 		$post_data = $this->render->json_post();
 		$name = $post_data['name'];
@@ -76,6 +96,10 @@ class sleek extends Controller {
 
 					if(isset($q['join'])) {
 						$tmpData = $this->getJoinData($tmpData, $q['join']);
+					}
+
+					if(isset($q['relation'])) {
+						$tmpData = $this->getRelationData($tmpData, $q['relation']);
 					}
 
 					$data['data'][] = array("rows" => $tmpData, "total" => $tmpTotalRows);
