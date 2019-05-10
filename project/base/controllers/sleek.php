@@ -47,6 +47,7 @@ class sleek extends Controller {
 					$relationDataId[] = $rRow["_id"];
 				}
 				$tmpData[$tKey][$rKey] = $relationDataId;
+				$tmpData[$tKey][$rKey."_count"] = count($relationDataId);
 			}
 		}
 		return $tmpData;
