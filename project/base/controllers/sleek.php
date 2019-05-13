@@ -113,7 +113,6 @@ class sleek extends Controller {
 		$post_data = $this->render->json_post();
 		$name = $post_data['name'];
 		$type = $post_data['type'];
-		$uniq_id = array();
 
 		$json_data = null;
 		if(file_exists('project/base/config/sleek-mutation/'.$name.'.json')){
@@ -123,9 +122,6 @@ class sleek extends Controller {
 		}
 
 		$store = $json_data['store'];
-		if(isset($json_data['uniq_id'])){
-			$uniq_id = $json_data['uniq_id'];
-		}
 		
 		function getInputData($my_data, $my_fields, $type) {
 			$input_data = array();
@@ -159,6 +155,40 @@ class sleek extends Controller {
 								"condition" => ["_hash","=",$hash]
 							]]);							
 							$condition = [];
+
+							if(isset($json_data['uniq_id'])){
+								$uniq_id = $json_data['uniq_id'];
+								foreach($uniq_id as $id) {
+									if(isset($input_data[$id])) {
+										$condition[] = [
+											"condition" => [$id,"=",$input_data[$id]],
+											"next" => "or"
+										];
+									}
+								}
+								$tmpData2 = $this->sleekdb->select($store, [], $condition);
+								if(count($tmpData) === 0) {
+									if(count($tmpData2) === 0) {
+										$this->sleekdb->insert($store, $input_data);
+									}
+								}
+							} else {
+								if(count($tmpData) === 0) {
+									$this->sleekdb->insert($store, $input_data);
+								}
+							}
+						}
+						$this->set->success_message(true);
+					} else {
+						$input_data = getInputData($post_data['data'], $json_data['fields'], $type);
+						
+						$hash = md5(json_encode( $input_data ));
+						$tmpData = $this->sleekdb->select($store, [], [[
+							"condition" => ["_hash","=",$hash]
+						]]);							
+						$condition = [];
+						if(isset($json_data['uniq_id'])){
+							$uniq_id = $json_data['uniq_id'];
 							foreach($uniq_id as $id) {
 								if(isset($input_data[$id])) {
 									$condition[] = [
@@ -173,27 +203,8 @@ class sleek extends Controller {
 									$this->sleekdb->insert($store, $input_data);
 								}
 							}
-						}
-						$this->set->success_message(true);
-					} else {
-						$input_data = getInputData($post_data['data'], $json_data['fields'], $type);
-						
-						$hash = md5(json_encode( $input_data ));
-						$tmpData = $this->sleekdb->select($store, [], [[
-							"condition" => ["_hash","=",$hash]
-						]]);							
-						$condition = [];
-						foreach($uniq_id as $id) {
-							if(isset($input_data[$id])) {
-								$condition[] = [
-									"condition" => [$id,"=",$input_data[$id]],
-									"next" => "or"
-								];
-							}
-						}
-						$tmpData2 = $this->sleekdb->select($store, [], $condition);
-						if(count($tmpData) === 0) {
-							if(count($tmpData2) === 0) {
+						} else {
+							if(count($tmpData) === 0) {
 								$this->sleekdb->insert($store, $input_data);
 							}
 						}
