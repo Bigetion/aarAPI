@@ -13,7 +13,7 @@ class sleekdb {
     ));
   }
 
-  public function getDataByWhere($jsonq, $where = array()) {
+  private function getDataByWhere($jsonq, $where = array()) {
     $currentWhere = '';
     $limit = -1;
     $nextCondition = '';
