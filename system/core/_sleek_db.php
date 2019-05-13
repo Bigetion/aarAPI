@@ -4,13 +4,6 @@ require_once 'vendor/sleekdb/src/SleekDB.php';
 
 class sleekdb {
   private $totalRows_ = 0;
-  public function setStore($store) {
-    $this->store = new \SleekDB\SleekDB($store);
-    $data = $this->store->fetch();
-    $this->jsonq = new \Nahid\JsonQ\Jsonq();
-    $this->jsonq->collect($data);
-    return $this;
-  }
 
   private function setInit($store) {
     $this->store = new \SleekDB\SleekDB($store, array(
@@ -20,7 +13,7 @@ class sleekdb {
     ));
   }
 
-  private function getDataByWhere($jsonq, $where = array()) {
+  public function getDataByWhere($jsonq, $where = array()) {
     $currentWhere = '';
     $limit = -1;
     $nextCondition = '';
