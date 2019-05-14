@@ -88,10 +88,10 @@ function &load_class($class) {
     return $_classes[$class];
 }
 foreach (load_recursive('system') as $value) {
-	require_once($value);
+	require_once $value;
 }
 
-require_once('vendor/autoload.php');
+require_once 'vendor/autoload.php';
 
 $project = str_replace('-','_',segment(1));
 $controller = str_replace('-','_',segment(2));

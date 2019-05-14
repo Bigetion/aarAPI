@@ -157,7 +157,7 @@ class Project {
 				show_error('Page not found', 'Project ' . default_project . ' was not found');
 				
 		    if ($this->is_exist_project_controller(default_project,default_project_controller))
-				require_once('project/' . default_project . '/controllers/' . default_project_controller . '.php');
+				require_once 'project/' . default_project . '/controllers/' . default_project_controller . '.php';
 			else
 				show_error('Page not found','Main project controller ' . default_project_controller . ' was not found');
 				
@@ -168,7 +168,7 @@ class Project {
 		else{							
 			if($this->is_exist_app_controller($this->project)){
 				$this->is_project = false;
-				require_once('application/controllers/' . $this->project . '.php');
+				require_once 'application/controllers/' . $this->project . '.php';
 				
 				if(empty($this->controller) && empty($this->method)){
 					$this->controller = $this->project;
@@ -180,7 +180,7 @@ class Project {
 			}elseif($this->is_exist_project($this->project)){
 
 				if ($this->is_exist_project_controller(default_project,default_project_controller))
-					require_once('project/' . default_project . '/controllers/' . default_project_controller . '.php');
+					require_once 'project/' . default_project . '/controllers/' . default_project_controller . '.php';
 				else
 					show_error('Page not found','Main project controller ' . default_project_controller . ' was not found');
 							
@@ -200,7 +200,7 @@ class Project {
                 else if(empty($this->method)) $this->method = "index";
 				
 				if($this->is_exist_project_controller($this->project,$this->controller)) {
-					require_once('project/' . $this->project . '/controllers/' . $this->controller . '.php');
+					require_once 'project/' . $this->project . '/controllers/' . $this->controller . '.php';
 				}else show_error('Page not found','Controller ' . $this->controller . ' was not found');
 
 				$this->check_permission();
