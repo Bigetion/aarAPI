@@ -94,18 +94,6 @@ class Autotable {
 				)");
 			}
 		}
-		
-		if (!in_array('pages', $tabel)) {
-			if($database_type === 'pgsql') {
-
-			} else {
-				$db->exec("CREATE TABLE `pages` (
-					`id_page` varchar(50) NOT NULL,
-					`content` longblob NOT NULL,
-					PRIMARY KEY (`id_page`)
-				) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
-			}
-		}
 	}        
 
 }
