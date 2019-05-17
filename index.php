@@ -98,6 +98,6 @@ $controller = str_replace('-','_',segment(2));
 $method = str_replace('-','_',segment(3));
 $CONFIG = & load_class('Project');
 session_start();
-ob_start();
+ob_start("ob_gzhandler");
 $CONFIG->set_project($project)->set_controller($controller)->set_method($method)->render();
 ?>
