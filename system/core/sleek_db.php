@@ -100,6 +100,14 @@ class sleekdb {
     return $data;
   }
 
+  public function select_from_array($data, $where = false) {
+    $this->jsonq = new \Nahid\JsonQ\Jsonq();
+    $this->jsonq->collect($data);
+    $data = $this->getDataByWhere($this->jsonq, $where);
+    
+    return $data;
+  }
+
   public function insert($store, $data) {
     $this->setInit($store);
     return $this->store->insert($data);

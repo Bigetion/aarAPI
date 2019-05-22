@@ -47,6 +47,7 @@ class sleek extends Controller {
 					$relationDataId[] = $rRow["_id"];
 				}
 				$tmpData[$tKey][$rKey] = $relationDataId;
+				$tmpData[$tKey][$rKey.'_count'] = count($relationDataId);
 			}
 		}
 		return $tmpData;
@@ -74,14 +75,20 @@ class sleek extends Controller {
 					$tmpData = $this->sleekdb->select($store, $keys, $where);
 					$tmpTotalRows = $this->sleekdb->totalRows();					
 
+					if(isset($q['join'])) {
+						$tmpData = $this->getJoinData($tmpData, $q['join']);
+					}
+
+					if(isset($q['related_to'])) {
+						$tmpData = $this->getRelationData($tmpData, $q['related_to']);
+					}
+
 					if(isset($post_data['options'])){
 						if(isset($post_data['options'][$key])){
 							$options = $post_data['options'][$key];
 							if(isset($options['where'])) {
 								$where = $options['where'];
 							}
-							$tmpData = $this->sleekdb->select($store, $keys, $where);
-							$tmpTotalRows = $this->sleekdb->totalRows();
 							if(isset($options['limit'])) {
 								$limit = $options['limit'];
 								$where[] = ["limit" => $limit];
@@ -90,16 +97,8 @@ class sleek extends Controller {
 								$sortBy = $options['sortBy'];
 								$where[] = ["sortBy" => $sortBy];
 							}
-							$tmpData = $this->sleekdb->select($store, $keys, $where);
+							$tmpData = $this->sleekdb->select_from_array($tmpData, $where);
 						};
-					}
-
-					if(isset($q['join'])) {
-						$tmpData = $this->getJoinData($tmpData, $q['join']);
-					}
-
-					if(isset($q['related_to'])) {
-						$tmpData = $this->getRelationData($tmpData, $q['related_to']);
 					}
 
 					$data['data'][] = array("rows" => $tmpData, "total" => $tmpTotalRows);
