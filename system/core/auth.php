@@ -25,7 +25,7 @@ class Auth {
                     $data = $db->query("select * from users where username = '$username'")->fetchAll();
                     $id_role = $data[0]['id_role'];
 
-                    if($id_role!=1){
+                    if($id_role === 2){
                         show_error('Authentication','Please login to access this page');
                     }
 
