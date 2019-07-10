@@ -97,7 +97,11 @@ class service extends Controller {
 						}
 					}
 				} else {
-					$data['data'] = $this->getDataByJson($json_data['query'], array());
+					$where = array();
+					if(isset($post_data['where'])){
+						$where = $post_data['where'];
+					}
+					$data['data'] = $this->getDataByJson($json_data['query'], $where);
 				}
 			} else {
 				$data['data'] = $this->getDataByJson($json_data['query'], "");
