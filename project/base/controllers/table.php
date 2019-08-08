@@ -64,48 +64,5 @@ class table extends Controller {
 		$data['log'] = $this->db->log();
 		$this->render->json($data);
 	}
-	
-	function submitDelete(){
-		$post_data = $this->render->json_post();
-		$table = $post_data['table'];
-		$where = $post_data['where'];
-
-		$deleted_column = $this->db->query("SHOW COLUMNS FROM ".$table." LIKE 'deleted'")->fetchAll();
-		if(count($deleted_column)>0){
-			if($this->db->update($table, array("deleted"=>1), $where)){
-				$this->set->success_message(true);
-			}
-		}else{
-			if($this->db->delete($table, $where)){
-				$this->set->success_message(true);
-			}
-		}
-		$this->set->error_message(true, $this->db->log());
-	}
-
-	function recoverDelete(){
-		$post_data = $this->render->json_post();
-		$table = $post_data['table'];
-		$where = $post_data['where'];
-
-		$deleted_column = $this->db->query("SHOW COLUMNS FROM ".$table." LIKE 'deleted'")->fetchAll();
-		if(count($deleted_column)>0){
-			if($this->db->update($table, array("deleted"=>0), $where)){
-				$this->set->success_message(true);
-			}
-		}
-		$this->set->error_message(true, $this->db->log());
-	}
-
-	function permanentDelete(){
-		$post_data = $this->render->json_post();
-		$table = $post_data['table'];
-		$where = $post_data['where'];
-
-		if($this->db->delete($table, $where)){
-			$this->set->success_message(true);
-		}
-		$this->set->error_message(true, $this->db->log());
-	}
 }
 ?>
