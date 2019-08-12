@@ -88,6 +88,8 @@ class sleek extends Controller {
 							$options = $post_data['options'][$key];
 							if(isset($options['where'])) {
 								$where = $options['where'];
+								$tmpData = $this->sleekdb->select_from_array($tmpData, $where);
+								$tmpTotalRows = count($tmpData);
 							}
 							if(isset($options['limit'])) {
 								$limit = $options['limit'];
