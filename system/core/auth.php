@@ -1,9 +1,10 @@
 <?php  if ( ! defined('INDEX')) exit('No direct script access allowed');
 
 class Auth {
-    function permission($id = [1]) {
+    function permission() {
         if(get_header('Authorization')){
             $authorization_header = get_header('Authorization');
+            $bearer_header_list = explode('Bearer',get_header('Authorization'));
             $bearer_pos = stripos($authorization_header, 'bearer ');
             if ($authorization_header !== false && ($bearer_pos !== false)) {
                 $authorization_header = substr($authorization_header,7);
@@ -24,7 +25,7 @@ class Auth {
                     $data = $db->query("select * from users where username = '$username'")->fetchAll();
                     $id_role = $data[0]['id_role'];
 
-                    if(!in_array($id_role, $id)){
+                    if($id_role === 2){
                         show_error('Authentication','Please login to access this page');
                     }
 
