@@ -137,6 +137,12 @@ class service extends Controller {
 			return $input_data;
 		}
 		$data['id'] = false;
+		$where = [$primary_key => '-1'];
+		if(isset($post_data['id'])) {
+			$where = [$primary_key => $post_data['id']];
+		} else if($post_data['where']) {
+			$where = $post_data['where'];
+		}
 		if($type == 'insert') {
 			if(in_array(id_role, $json_data['roles']['insert'])){
 				if(is_array($post_data['data'])){
@@ -161,13 +167,13 @@ class service extends Controller {
 		}elseif($type == 'update') {
 			$input_data = getInputData($post_data['data'], $json_data['fields']);
 			if(in_array(id_role, $json_data['roles']['update'])){
-				if($this->db->update($table, $input_data, [$primary_key => $post_data['id']])){
+				if($this->db->update($table, $input_data, $where)){
 					$this->set->success_message(true, $this->db->log());
 				}
 			}
 		}elseif($type == 'delete') {
 			if(in_array(id_role, $json_data['roles']['delete'])){
-				if($this->db->delete($table, [$primary_key => $post_data['id']])){
+				if($this->db->delete($table, $where)){
 					$this->set->success_message(true, $this->db->log());
 				}
 			}
