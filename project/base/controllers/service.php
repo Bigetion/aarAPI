@@ -140,7 +140,7 @@ class service extends Controller {
 		$where = [$primary_key => '-1'];
 		if(isset($post_data['id'])) {
 			$where = [$primary_key => $post_data['id']];
-		} else if($post_data['where']) {
+		} else if(isset($post_data['where'])) {
 			$where = $post_data['where'];
 		}
 		if($type == 'insert') {
