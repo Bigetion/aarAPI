@@ -33,6 +33,10 @@ class sleekdb {
       return in_array($val, $data, true);
     });
 
+    $jsonq->macro('having', function($data, $val) {
+      return in_array($data, $val, true);
+    });
+
     $jsonq->macro('inarraycontains', function($data, $val) {
       foreach($data as $item) {
         if (stripos($val,$item) !== false) return true;

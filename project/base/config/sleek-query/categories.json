@@ -2,8 +2,8 @@
   "query": [{
     "store": "categories",
     "keys": ["_id", "name", "description"],
-    "related_to": {
-      "posts": ["_id", "categories"]
+    "join": {
+      "posts": ["_id", "inarray", "categories"]
     }
   }]
 }

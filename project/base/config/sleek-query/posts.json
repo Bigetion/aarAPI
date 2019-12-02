@@ -3,10 +3,7 @@
     "store": "posts",
     "keys": [],
     "join": {
-      "categories": ["_id", {
-        "store": "categories",
-        "keys": []
-      }]
+      "categories": ["categories", "having", "_id" ]
     }
   }]
 }

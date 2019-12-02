@@ -4,63 +4,6 @@
 
 class sleek extends Controller
 {
-
-    private function getJoinData($tmpData, $qJoin)
-    {
-        foreach ($qJoin as $jKey => $join) {
-            $joinId = $join[0];
-            $joinObj = $join[1];
-
-            $store = $joinObj['store'];
-            $keys = $joinObj['keys'];
-
-            foreach ($tmpData as $tKey => $row) {
-                if (isset($row[$jKey])) {
-                    $condition = '=';
-                    if (is_array($row[$jKey])) {
-                        $array_keys = array_keys($row[$jKey]);
-                        if (count($array_keys) > 0) {
-                            if ($array_keys[0] === 0) {
-                                $condition = 'in';
-                            }
-                        }
-                    }
-                    $conditionVal = [$joinId, $condition, $row[$jKey]];
-                    $joinWhere = [["condition" => $conditionVal]];
-                    $joinData = $this->sleekdb->select($store, $keys, $joinWhere);
-
-                    if (isset($joinObj['join'])) {
-                        $joinData = $this->getJoinData($joinData, $joinObj['join']);
-                    }
-                    $tmpData[$tKey][$jKey . "_joindata"] = $joinData;
-                }
-            }
-        }
-        return $tmpData;
-    }
-
-    private function getRelationData($tmpData, $qRelation)
-    {
-        foreach ($qRelation as $rKey => $relation) {
-            $relationId = $relation[0];
-            $relationKey = $relation[1];
-
-            foreach ($tmpData as $tKey => $row) {
-                $relationData = $this->sleekdb->select($rKey, ["_id", $relationKey], [
-                    ["condition" => [$relationKey, "=", $row[$relationId]], "next" => "or"],
-                    ["condition" => [$relationKey, "inarray", $row[$relationId]]],
-                ]);
-                $relationDataId = array();
-                foreach ($relationData as $rRow) {
-                    $relationDataId[] = $rRow["_id"];
-                }
-                $tmpData[$tKey][$rKey] = $relationDataId;
-                $tmpData[$tKey][$rKey . '_count'] = count($relationDataId);
-            }
-        }
-        return $tmpData;
-    }
-
     public function getData()
     {
         $post_data = $this->render->json_post();
@@ -84,14 +27,6 @@ class sleek extends Controller
                     $tmpData = $this->sleekdb->select($store, $keys, $where);
                     $tmpTotalRows = $this->sleekdb->totalRows();
 
-                    if (isset($q['join'])) {
-                        $tmpData = $this->getJoinData($tmpData, $q['join']);
-                    }
-
-                    if (isset($q['related_to'])) {
-                        $tmpData = $this->getRelationData($tmpData, $q['related_to']);
-                    }
-
                     if (isset($post_data['options'])) {
                         if (isset($post_data['options'][$key])) {
                             $options = $post_data['options'][$key];
@@ -110,6 +45,18 @@ class sleek extends Controller
                             }
                             $tmpData = $this->sleekdb->select_from_array($tmpData, $where);
                         };
+                    }
+
+                    if (isset($q['join'])) {
+                        foreach ($q['join'] as $jKey => $join) {
+                            $joinKey = $join[0];
+                            $joinCondition = $join[1];
+                            $joinVal = $join[2];
+
+                            foreach ($tmpData as $tmpDataKey => $tmpDataRow) {
+                                $tmpData[$tmpDataKey][$jKey . '_joindata'] = $this->sleekdb->select($jKey, [], [["condition" => [$joinVal, $joinCondition, $tmpDataRow[$joinKey]]]]);
+                            }
+                        }
                     }
 
                     $data['data'][] = array("rows" => $tmpData, "total" => $tmpTotalRows);
