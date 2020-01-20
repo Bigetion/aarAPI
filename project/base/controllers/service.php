@@ -1,6 +1,8 @@
 <?php  if ( ! defined('INDEX')) exit('No direct script access allowed');
 class service extends Controller {
 
+	var $uuid = false;
+
 	function getQueryServiceOptions(){
 		$post_data = $this->render->json_post();
 		$name = $post_data['name'];
@@ -131,11 +133,16 @@ class service extends Controller {
 						if($field['type']=='password'){
 							$input_data[$field['id']] = password_hash($input_data[$field['id']],1);
 						}
+						if($field['type']=='uuid'){
+							$this->uuid = md5(uniqid());
+							$input_data[$field['id']] = $this->uuid;
+						}
 					}
 				}
 			}
 			return $input_data;
 		}
+		$this->uuid = false;
 		$data['id'] = false;
 		$where = [$primary_key => '-1'];
 		if(isset($post_data['id'])) {
@@ -159,6 +166,7 @@ class service extends Controller {
 						$input_data = getInputData($post_data['data'], $json_data['fields']);
 						if($this->db->insert($table, $input_data)){
 							$id = $this->db->id();
+							if($this->uuid) $id = $this->uuid;
 							$this->set->success_message(true, array('id'=>$id));
 						}
 					}
