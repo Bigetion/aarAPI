@@ -15,7 +15,7 @@ class service extends Controller {
 		$this->render->json($data);
 	}
 
-	function getInputData($my_data, $my_fields) {
+	private function getInputData($my_data, $my_fields) {
 		$input_data = array();
 		foreach($my_fields as $field){
 			if(isset($my_data[$field['id']])){
