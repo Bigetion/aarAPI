@@ -15,6 +15,25 @@ class service extends Controller {
 		$this->render->json($data);
 	}
 
+	function getInputData($my_data, $my_fields) {
+		$input_data = array();
+		foreach($my_fields as $field){
+			if(isset($my_data[$field['id']])){
+				$input_data[$field['id']] = $my_data[$field['id']];
+				if(isset($field['type'])){
+					if($field['type']=='password'){
+						$input_data[$field['id']] = password_hash($input_data[$field['id']],1);
+					}
+					if($field['type']=='uuid'){
+						$this->uuid = md5(uniqid());
+						$input_data[$field['id']] = $this->uuid;
+					}
+				}
+			}
+		}
+		return $input_data;
+	}
+
 	private function getDataByJson($query, $where) {
 		if(is_string($query)){
 			$data = $this->db->query($query." ".$where);
@@ -124,24 +143,6 @@ class service extends Controller {
 		$primary_key = $json_data['primary_key'];
 		$data = array();
 
-		function getInputData($my_data, $my_fields) {
-			$input_data = array();
-			foreach($my_fields as $field){
-				if(isset($my_data[$field['id']])){
-					$input_data[$field['id']] = $my_data[$field['id']];
-					if(isset($field['type'])){
-						if($field['type']=='password'){
-							$input_data[$field['id']] = password_hash($input_data[$field['id']],1);
-						}
-						if($field['type']=='uuid'){
-							$this->uuid = md5(uniqid());
-							$input_data[$field['id']] = $this->uuid;
-						}
-					}
-				}
-			}
-			return $input_data;
-		}
 		$this->uuid = false;
 		$data['id'] = false;
 		$where = [$primary_key => '-1'];
@@ -157,13 +158,13 @@ class service extends Controller {
 					if($array_keys[0] === 0){
 						$input_data = array();
 						foreach($array_keys as $key) {
-							$input_data[] = getInputData($post_data['data'][$key], $json_data['fields']);
+							$input_data[] = $this->getInputData($post_data['data'][$key], $json_data['fields']);
 						}
 						if($this->db->insert($table, $input_data)) {
 							$this->set->success_message(true);
 						}
 					} else {
-						$input_data = getInputData($post_data['data'], $json_data['fields']);
+						$input_data = $this->getInputData($post_data['data'], $json_data['fields']);
 						if($this->db->insert($table, $input_data)){
 							$id = $this->db->id();
 							if($this->uuid) $id = $this->uuid;
@@ -173,7 +174,7 @@ class service extends Controller {
 				}
 			}
 		}elseif($type == 'update') {
-			$input_data = getInputData($post_data['data'], $json_data['fields']);
+			$input_data = $this->getInputData($post_data['data'], $json_data['fields']);
 			if(in_array(id_role, $json_data['roles']['update'])){
 				if($this->db->update($table, $input_data, $where)){
 					$this->set->success_message(true, $this->db->log());
