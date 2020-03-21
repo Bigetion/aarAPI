@@ -44,7 +44,7 @@ class App extends Main {
     
     function getUserInfo(){
         $data['idRole'] = id_role;
-		    $data['idUser'] = id_user;
+	    $data['idUser'] = id_user;
 
         $dataUser = $this->db->select("users",[
             "[>]roles" => "id_role"
@@ -57,6 +57,7 @@ class App extends Main {
         if(count($dataUser) > 0){
           $data['username'] = $dataUser[0]['username'];
           $data['roleName'] = $dataUser[0]['role_name'];
+          $data['externalInfo'] = array();
         }
         $this->render->json($data);
     }
