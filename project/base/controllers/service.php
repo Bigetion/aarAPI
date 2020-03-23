@@ -117,15 +117,31 @@ class service extends Controller {
 							$data['data'][] = $this->getDataByJson($q, $where);
 						}
 					}
-				} else {
+				}
+			} else {
+				$query = $json_data['query'];
+				if(is_string($query)){
+					$where = "";
+					if(isset($post_data['where'])){
+						$where = $post_data['where'];
+						if(is_array($where)){
+							$where_key = array();
+							$where_value = array();
+							foreach($where as $wk=>$wv){
+								$where_key[] = '$'.$wk;
+								$where_value[] = $wv;
+							}
+							$query = str_replace($where_key, $where_value, $query);
+							$where = "";
+						}
+					}
+				}else{
 					$where = array();
 					if(isset($post_data['where'])){
 						$where = $post_data['where'];
 					}
-					$data['data'] = $this->getDataByJson($json_data['query'], $where);
 				}
-			} else {
-				$data['data'] = $this->getDataByJson($json_data['query'], "");
+				$data['data'] = $this->getDataByJson($query, $where);
 			}
 			$data['log'] = $this->db->log();
 		}
