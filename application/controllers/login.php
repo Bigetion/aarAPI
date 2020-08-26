@@ -31,7 +31,14 @@ class Login extends Main {
         if (empty($user)|| empty($password))
             $this->set->error_message(true);
             
-        $data = $this->db->select("users","*",["username"=>$user]);
+        $data = $this->db->select("users",[
+            "[>]roles" => "id_role"
+        ],[
+            "users.id_user", "users.id_role","users.username","users.password", "roles.role_name"
+        ],[
+            "username"=>$user
+        ]);
+        
         if (count($data) == 0)
             $this->set->error_message(true);
         else {
@@ -51,9 +58,16 @@ class Login extends Main {
                     );
                     $jwtTokenEncode = $this->jwt->encode($payload, base64_decode(secret_key));
 
-                    $token['jwt'] = $jwtTokenEncode;
+                    $response = array();
+                    $response['jwt'] = $jwtTokenEncode;
+                    $response['user'] = array(
+                        'idRole' => $data[0]['id_role'],
+                        'idUser' => $data[0]['id_user'],
+                        'username' => $data[0]['username'],
+                        'roleName' => $data[0]['role_name']
+                    );
                     
-                    $this->set->success_message(true, $token);
+                    $this->set->success_message(true, $response);
                 }
                 catch(Exception $ex){
                     $this->set->error_message(true, $ex);
