@@ -31,6 +31,7 @@ class tree extends Controller {
 				$data['data'] = $this->db->select($table, $column, $where);
 			}
 		}
+		$data['error'] = $this->db->error();
 		$data['log'] = $this->db->log();
 		$this->render->json($data);
 	}

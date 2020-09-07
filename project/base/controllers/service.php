@@ -142,6 +142,7 @@ class service extends Controller {
 				}
 				$data['data'] = $this->getDataByJson($query, $where);
 			}
+			$data['error'] = $this->db->error();
 			$data['log'] = $this->db->log();
 		}
 		$this->render->json($data);
@@ -159,7 +160,6 @@ class service extends Controller {
 		$data = array();
 
 		$this->uuid = false;
-		$data['id'] = false;
 		$where = [$primary_key => '-1'];
 		if(isset($post_data['id'])) {
 			$where = [$primary_key => $post_data['id']];
@@ -202,7 +202,9 @@ class service extends Controller {
 				}
 			}
 		}
-		$this->set->error_message(true, $this->db->log());
+		$data['error'] = $this->db->error();
+		$data['log'] = $this->db->log();
+		$this->set->error_message(true, $data);
 	}
 }
 ?>
