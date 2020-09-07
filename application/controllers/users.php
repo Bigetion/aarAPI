@@ -1,53 +1,60 @@
-<?php  if ( ! defined('INDEX')) exit('No direct script access allowed');
+<?php if (!defined('INDEX')) {
+    exit('No direct script access allowed');
+}
 
-class Users extends Main {
-    function __construct() {
+class Users extends Main
+{
+    public function __construct()
+    {
         $this->auth->permission();
     }
 
-    function getData(){
-        $data['data'] = $this->db->select("users",[
-            "[>]roles" => "id_role"
-        ],[
-            "users.id_user", "users.id_role","users.username", "roles.role_name"
+    public function getData()
+    {
+        $data['data'] = $this->db->select("users", [
+            "[>]roles" => "id_role",
+        ], [
+            "users.id_user", "users.id_role", "users.username", "roles.role_name",
         ], [
             "ORDER" => ["users.id_user" => "ASC"],
         ]);
         $this->render->json($data);
     }
 
-    function submitAdd(){
+    public function submitAdd()
+    {
         $post_data = $this->render->json_post();
         $data = array(
-            'username'  => $post_data['userName'],
-            'id_role'   => $post_data['idRole'],
-            'password'  => password_hash($post_data['password'],1)
+            'username' => $post_data['userName'],
+            'id_role' => $post_data['idRole'],
+            'password' => password_hash($post_data['password'], 1),
         );
-        if($this->db->insert("users", $data)){
+        if ($this->db->insert("users", $data)) {
             $id = $this->db->id();
-            $this->set->success_message(true, array('id'=>$id));
+            $this->set->success_message(true, array('id' => $id));
         }
         $this->set->error_message(true, $this->db->log());
     }
 
-    function submitEdit(){
+    public function submitEdit()
+    {
         $post_data = $this->render->json_post();
         $data = array(
-            'username'     => $post_data['userName'],
-            'id_role'   => $post_data['idRole'],
+            'username' => $post_data['userName'],
+            'id_role' => $post_data['idRole'],
         );
-        if($this->db->update("users", $data, ["id_user" => $post_data['idUser']])){
+        if ($this->db->update("users", $data, ["id_user" => $post_data['idUser']])) {
             $this->set->success_message(true);
         }
         $this->set->error_message(true, $this->db->log());
     }
 
-    function submitDelete(){
+    public function submitDelete()
+    {
         $post_data = $this->render->json_post();
-        if($this->db->delete("users", ["id_user" => $post_data['idUser']])){
+        if ($this->db->delete("users", ["id_user" => $post_data['idUser']])) {
             $this->set->success_message(true);
         }
         $this->set->error_message(true, $this->db->log());
     }
-}    
-?>
+}

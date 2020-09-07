@@ -1,8 +1,12 @@
-<?php  if ( ! defined('INDEX')) exit('No direct script access allowed');
-class home extends Controller {
-
-	function index(){
-		
-	}
+<?php if (!defined('INDEX')) {
+    exit('No direct script access allowed');
 }
-?>
+
+class home extends Controller
+{
+
+    public function index()
+    {
+
+    }
+}
