@@ -14,7 +14,7 @@ class Users extends Main
         $data['data'] = $this->db->select("users", [
             "[>]roles" => "id_role",
         ], [
-            "users.id_user", "users.id_role", "users.username", "roles.role_name",
+            "users.id_user", "users.id_role", "users.username", "users.name", "roles.role_name",
         ], [
             "ORDER" => ["users.id_user" => "ASC"],
         ]);
@@ -26,6 +26,7 @@ class Users extends Main
         $post_data = $this->render->json_post();
         $data = array(
             'username' => $post_data['userName'],
+            'name' => $post_data['name'],
             'id_role' => $post_data['idRole'],
             'password' => password_hash($post_data['password'], 1),
         );
@@ -41,6 +42,7 @@ class Users extends Main
         $post_data = $this->render->json_post();
         $data = array(
             'username' => $post_data['userName'],
+            'name' => $post_data['name'],
             'id_role' => $post_data['idRole'],
         );
         if ($this->db->update("users", $data, ["id_user" => $post_data['idUser']])) {

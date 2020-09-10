@@ -58,13 +58,14 @@ class App extends Main
         $dataUser = $this->db->select("users", [
             "[>]roles" => "id_role",
         ], [
-            "users.id_user", "users.id_role", "users.username", "roles.role_name",
+            "users.id_user", "users.id_role", "users.username", "users.name", "roles.role_name",
         ], [
             "users.id_user" => id_user,
         ]);
 
         if (count($dataUser) > 0) {
             $data['username'] = $dataUser[0]['username'];
+            $data['name'] = $dataUser[0]['name'];
             $data['roleName'] = $dataUser[0]['role_name'];
             $data['externalInfo'] = array();
         }

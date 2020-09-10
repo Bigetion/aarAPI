@@ -10,6 +10,9 @@
     "id": "username",
     "validation": ""
   },{
+    "id": "name",
+    "validation": ""
+  },{
     "id": "password",
     "validation": "",
     "type": "password"

@@ -50,6 +50,7 @@ class Autotable {
 				$db->exec("CREATE TABLE users (
 					id_user SERIAL PRIMARY KEY,
 					username varchar(10) NOT NULL,
+					name varchar(255) NOT NULL,
 					password text NOT NULL,
 					id_role int NOT NULL,
 					id_type smallint,
@@ -59,6 +60,7 @@ class Autotable {
 				$db->exec("CREATE TABLE `users` (
 					`id_user` int(10) NOT NULL AUTO_INCREMENT,
 					`username` varchar(10) NOT NULL,
+					`name` varchar(10) NOT NULL,
 					`password` text NOT NULL,
 					`id_role` int(10) NOT NULL,
 					`id_type` tinyint(1),
@@ -69,12 +71,14 @@ class Autotable {
 				
 			$data_user['id_user'] = '1';
 			$data_user['username'] = 'Admin';
+			$data_user['name'] = 'Admin';
 			$data_user['password'] = password_hash("Admin",1);
 			$data_user['id_role'] = '1';
 			$db->insert('users', $data_user);
 
 			$data_user['id_user'] = '2';
 			$data_user['username'] = 'Guest';
+			$data_user['name'] = 'Guest';
 			$data_user['password'] = password_hash("Guest",1);
 			$data_user['id_role'] = '2';
 			$db->insert('users', $data_user);

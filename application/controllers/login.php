@@ -40,7 +40,7 @@ class Login extends Main
         $data = $this->db->select("users", [
             "[>]roles" => "id_role",
         ], [
-            "users.id_user", "users.id_role", "users.username", "users.password", "roles.role_name",
+            "users.id_user", "users.id_role", "users.username", "users.name", "users.password", "roles.role_name",
         ], [
             "username" => $user,
         ]);
@@ -72,6 +72,7 @@ class Login extends Main
                         'idRole' => $data[0]['id_role'],
                         'idUser' => $data[0]['id_user'],
                         'username' => $data[0]['username'],
+                        'name' => $data[0]['name'],
                         'roleName' => $data[0]['role_name'],
                     );
 
