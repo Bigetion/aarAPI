@@ -22,9 +22,14 @@ class image extends Main
             $data['images'][] = array(
                 "name" => $image_info['basename'],
                 "url" => base_url . 'image/get/' . $image_path . $image_info['basename'],
-                "createdDate" => filectime($image),
+                "createdDate" => date("d/m/Y H:i:s", filectime($image)),
             );
         }
+        usort($data['images'], function ($a1, $a2) {
+            $v1 = strtotime($a1['createdDate']);
+            $v2 = strtotime($a2['createdDate']);
+            return $v2 - $v1;
+        });
         $this->render->json($data);
     }
 
