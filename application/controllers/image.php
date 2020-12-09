@@ -6,7 +6,6 @@ class image extends Main
 {
     public function getAll()
     {
-        $this->auth->permission();
         $post_data = $this->render->json_post();
         $image_path = '';
         $path = 'application/images/featured';
@@ -19,10 +18,11 @@ class image extends Main
 
         $data['images'] = array();
         foreach ($images as $image) {
-            $image = pathinfo($image);
+            $image_info = pathinfo($image);
             $data['images'][] = array(
-                "name" => $image['basename'],
-                "url" => base_url . 'image/get/' . $image_path . $image['basename'],
+                "name" => $image_info['basename'],
+                "url" => base_url . 'image/get/' . $image_path . $image_info['basename'],
+                "createdDate" => filectime($image),
             );
         }
         $this->render->json($data);
