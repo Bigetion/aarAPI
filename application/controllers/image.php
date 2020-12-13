@@ -26,9 +26,12 @@ class image extends Main
             );
         }
         usort($data['images'], function ($a1, $a2) {
-            $v1 = strtotime($a1['createdDate']);
-            $v2 = strtotime($a2['createdDate']);
-            return $v2 - $v1;
+            $v1 = $a1['createdDate'];
+            $v2 = $a2['createdDate'];
+            if ($v1 === $v2) {
+                return 0;
+            }
+            return $v1 < $v2 ? 1 : -1;
         });
         $this->render->json($data);
     }
