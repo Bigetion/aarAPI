@@ -64,7 +64,9 @@ class image extends Main
                 $name = $_POST['filename'] . "." . $extension;
             }
 
-            if (move_uploaded_file($_FILES["image"]["tmp_name"], $path . '/' . $name)) {
+            $filepath = $path . '/' . $name;
+            if (move_uploaded_file($_FILES["image"]["tmp_name"], $filepath)) {
+                $this->imageresize->fromFile($filepath)->toFile($filepath, null, 80);
                 $this->set->success_message(true);
             }
             $this->set->error_message(true);
