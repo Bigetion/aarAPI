@@ -206,7 +206,7 @@ class DB
 				}
 			}
 
-			$dsn = $driver . ':' . implode($stack, ';');
+			$dsn = $driver . ':' . implode(';', $stack);
 
 			if (
 				in_array($this->database_type, ['mariadb', 'mysql', 'pgsql', 'sybase', 'mssql']) &&
@@ -324,7 +324,7 @@ class DB
 			}
 		}
 
-		return implode($stack, ',');
+		return implode(',', $stack);
 	}
 
 	protected function arrayQuote($array)
@@ -336,7 +336,7 @@ class DB
 			$temp[] = is_int($value) ? $value : $this->pdo->quote($value);
 		}
 
-		return implode($temp, ',');
+		return implode(',', $temp);
 	}
 
 	protected function innerConjunct($data, $conjunctor, $outer_conjunctor)
@@ -575,7 +575,7 @@ class DB
 
 				if (is_array($MATCH) && isset($MATCH[ 'columns' ], $MATCH[ 'keyword' ]))
 				{
-					$columns = str_replace('.', '"."', implode($MATCH[ 'columns' ], '", "'));
+					$columns = str_replace('.', '"."', implode('", "', $MATCH[ 'columns' ]));
 					$keywords = $this->quote($MATCH[ 'keyword' ]);
 
 					$where_clause .= ($where_clause != '' ? ' AND ' : ' WHERE ') . ' MATCH ("' . $columns . '") AGAINST (' . $keywords . ')';
@@ -616,7 +616,7 @@ class DB
 						}
 					}
 
-					$where_clause .= ' ORDER BY ' . implode($stack, ',');
+					$where_clause .= ' ORDER BY ' . implode(',', $stack);
 				}
 				else
 				{
@@ -710,7 +710,7 @@ class DB
 						// For ['column1', 'column2']
 						if (isset($relation[ 0 ]))
 						{
-							$relation = 'USING ("' . implode($relation, '", "') . '")';
+							$relation = 'USING ("' . implode('", "', $relation) . '")';
 						}
 						else
 						{
@@ -730,7 +730,7 @@ class DB
 								$this->tableQuote(isset($match[ 5 ]) ? $match[ 5 ] : $match[ 3 ]) . '."' . $value . '"';
 							}
 
-							$relation = 'ON ' . implode($joins, ' AND ');
+							$relation = 'ON ' . implode(' AND ', $joins);
 						}
 					}
 
@@ -745,7 +745,7 @@ class DB
 				}
 			}
 
-			$table_query .= ' ' . implode($table_join, ' ');
+			$table_query .= ' ' . implode(' ', $table_join);
 		}
 		else
 		{
@@ -960,7 +960,7 @@ class DB
 				}
 			}
 
-			$stack[] = '(' . implode($values, ', ') . ')';
+			$stack[] = '(' . implode(', ', $values) . ')';
 		}
 
 		foreach ($columns as $key)
