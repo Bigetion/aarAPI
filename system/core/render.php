@@ -13,6 +13,9 @@ class Render {
         $header_with_payload = get_header('Access-Control-Request-Method');
         if(!$header_with_payload){
             if (file_exists($data)) {
+                header('Pragma: public');
+                header('Cache-Control: max-age=86400');
+                header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
                 $imageInfo = getimagesize($data);
                 switch ($imageInfo[2]) {
                     case IMAGETYPE_JPEG:

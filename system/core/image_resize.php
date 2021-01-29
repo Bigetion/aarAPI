@@ -301,6 +301,9 @@ class Imageresize {
   public function toScreen($mimeType = null, $quality = 100) {
     $image = $this->generate($mimeType, $quality);
     // Output the image to stdout
+    header('Pragma: public');
+    header('Cache-Control: max-age=86400');
+    header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
     header('Content-Type: ' . $image['mimeType']);
     echo $image['data'];
     return $this;

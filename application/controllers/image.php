@@ -93,6 +93,23 @@ class image extends Main
         $this->set->error_message(true);
     }
 
+    public function deleteAll()
+    {
+        $this->auth->permission();
+        $post_data = $this->render->json_post();
+        $path = '';
+
+        if (isset($post_data['path'])) {
+            $path = $post_data['path'];
+        }
+
+        if (isset($post_data['path'])) {
+            $path = 'application/images/' . $post_data['path'];
+            $this->dir->remove_dir($path);
+        }
+        $this->set->error_message(true);
+    }
+
     public function get()
     {
         $id_image = subsegment(-1);
@@ -121,9 +138,8 @@ class image extends Main
             $this->imageresize->fromFile($fileOut)->resize($_GET['w'])->toScreen();
         } else if (isset($_GET['h'])) {
             $this->imageresize->fromFile($fileOut)->resize(false, $_GET['h'])->toScreen();
-        } else {
-            $this->render->image($fileOut);
         }
+        $this->render->image($fileOut);
     }
 
     public function getBase64()
