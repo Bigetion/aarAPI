@@ -86,8 +86,11 @@ class image extends Main
         if (isset($post_data['path']) && isset($post_data['img'])) {
             $path = 'application/images/' . $post_data['path'];
             $img = $post_data['img'];
-            if (unlink($path . '/' . $img)) {
-                $this->set->success_message(true);
+            $filename = $path . '/' . $img;
+            if (file_exists($filename)) {
+                if (unlink($path . '/' . $img)) {
+                    $this->set->success_message(true);
+                }
             }
         }
         $this->set->error_message(true);
