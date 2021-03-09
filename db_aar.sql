@@ -49,6 +49,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id_user` int(10) NOT NULL AUTO_INCREMENT,
   `username` varchar(10) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `password` text NOT NULL,
   `id_role` int(10) NOT NULL,
   `id_type` tinyint(1) DEFAULT NULL,
