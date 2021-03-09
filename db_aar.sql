@@ -60,8 +60,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Dumping data for table db_aar.users: ~4 rows (approximately)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id_user`, `username`, `password`, `id_role`, `id_type`, `id_external`) VALUES
-	(1, 'Admin', '$2y$10$iuhUFtYUoOpFG/Np5T.UieoLXK1mqfkryrL5qUyasWO0z183SASWO', 1, NULL, NULL),
-	(2, 'Guest', '$2y$10$tl8qEPewxNHVsHWyE/Jz6OrdThHNhKcnYzcE0Q/T7htzxIf1iL85e', 2, NULL, NULL);
+	(1, 'Admin', 'Administrator', '$2y$10$iuhUFtYUoOpFG/Np5T.UieoLXK1mqfkryrL5qUyasWO0z183SASWO', 1, NULL, NULL),
+	(2, 'Guest', '', '$2y$10$tl8qEPewxNHVsHWyE/Jz6OrdThHNhKcnYzcE0Q/T7htzxIf1iL85e', 2, NULL, NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
