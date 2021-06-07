@@ -49,7 +49,7 @@ class Autotable {
 			if($database_type === 'pgsql') {
 				$db->exec("CREATE TABLE users (
 					id_user SERIAL PRIMARY KEY,
-					username varchar(10) NOT NULL,
+					username varchar(100) NOT NULL,
 					name varchar(255) NOT NULL,
 					password text NOT NULL,
 					id_role int NOT NULL,
@@ -59,8 +59,8 @@ class Autotable {
 			} else {
 				$db->exec("CREATE TABLE `users` (
 					`id_user` int(10) NOT NULL AUTO_INCREMENT,
-					`username` varchar(10) NOT NULL,
-					`name` varchar(10) NOT NULL,
+					`username` varchar(100) NOT NULL,
+					`name` varchar(255) NOT NULL,
 					`password` text NOT NULL,
 					`id_role` int(10) NOT NULL,
 					`id_type` tinyint(1),
@@ -84,12 +84,16 @@ class Autotable {
 			$db->insert('users', $data_user);
     }
 
-		if(!in_array('short_link', $tabel)){
-			if($database_type === 'pgsql') {
-
+		if (!in_array('short_link', $tabel)){
+			if ($database_type === 'pgsql') {
+				$db->exec("CREATE TABLE users (
+					id_link SERIAL PRIMARY KEY,
+					link varchar(100) NOT NULL,
+					short_link varchar(50) NOT NULL
+				)");
 			} else {
 				$db->exec("CREATE TABLE `short_link` (
-					`id_link` int(11) NOT NULL AUTO_INCREMENT,
+					`id_link` int(10) NOT NULL AUTO_INCREMENT,
 					`link` varchar(100) NOT NULL,
 					`short_link` varchar(50) NOT NULL,
 					PRIMARY KEY (`id_link`),
