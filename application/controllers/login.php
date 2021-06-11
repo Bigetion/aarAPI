@@ -19,7 +19,7 @@ class Login extends Main
         ));
         $this->gump->run_validation($post_data);
 
-        $user = $post_data['username'];
+        $username = $post_data['username'];
         $password = $post_data['password'];
 
         function random_string($length = 10)
@@ -33,24 +33,24 @@ class Login extends Main
             return $randomString;
         }
 
-        if (empty($user) || empty($password)) {
+        if (empty($username) || empty($password)) {
             $this->set->error_message(true);
         }
 
-        $data = $this->db->select("users", [
+        $dataUser = $this->db->select("users", [
             "[>]roles" => "id_role",
         ], [
             "users.id_user", "users.id_role", "users.username", "users.name", "users.password", "roles.role_name",
         ], [
-            "username" => $user,
+            "username" => $username,
         ]);
 
-        if (count($data) == 0) {
+        if (count($dataUser) == 0) {
             $this->set->error_message(true);
         } else {
-            if (!password_verify($password, $data[0]["password"])) {
+            if (!password_verify($password, $dataUser[0]["password"])) {
                 $this->set->error_message(true);
-            } else if ($data[0]["id_role"] == 2) {
+            } else if ($dataUser[0]["id_role"] == 2) {
                 $this->set->error_message(true);
             } else {
                 try {
@@ -61,22 +61,21 @@ class Login extends Main
                         'exp' => time() + 7210,
                         'iss' => get_header('origin'),
                         'data' => array(
-                            'user' => $user,
+                            'user' => $username,
                         ),
                     );
                     $jwtTokenEncode = $this->jwt->encode($payload, base64_decode(secret_key));
 
-                    $response = array();
-                    $response['jwt'] = $jwtTokenEncode;
-                    $response['user'] = array(
-                        'idRole' => $data[0]['id_role'],
-                        'idUser' => $data[0]['id_user'],
-                        'username' => $data[0]['username'],
-                        'name' => $data[0]['name'],
-                        'roleName' => $data[0]['role_name'],
-                    );
+                    $data = array();
+                    $data['jwt'] = $jwtTokenEncode;
+                    $data['user']['idRole'] = $dataUser[0]['id_role'];
+                    $data['user']['idUser'] = $dataUser[0]['id_user'];
+                    $data['user']['username'] = $dataUser[0]['username'];
+                    $data['user']['name'] = $dataUser[0]['name'];
+                    $data['user']['roleName'] = $dataUser[0]['role_name'];
+                    $data['user']['externalInfo'] = array();
 
-                    $this->set->success_message(true, $response);
+                    $this->set->success_message(true, $data);
                 } catch (Exception $ex) {
                     $this->set->error_message(true, $ex);
                 }
