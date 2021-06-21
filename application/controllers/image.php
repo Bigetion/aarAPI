@@ -69,8 +69,8 @@ class image extends Main
                 $this->imageresize->fromFile($filepath)->toFile($filepath, null, 80);
                 $this->set->success_message(true);
             }
-            $this->set->error_message(true);
         }
+        $this->set->error_message(true);
     }
 
     public function deleteImage()
