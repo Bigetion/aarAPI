@@ -47,7 +47,7 @@ class select extends Controller
                 unset($count_where["LIMIT"]);
                 $data['total_rows'] = $this->db->count($table, $column[0], $count_where);
                 if (isset($where['GROUP'])) {
-                    $data['total_rows'] = count($this->db->select($table, $join, $column, $count_where));
+                    $data['total_rows'] = count($this->db->select($table, $column, $count_where));
                 }
                 $data['data'] = $this->db->select($table, $column, $where);
             }
