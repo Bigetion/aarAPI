@@ -153,9 +153,9 @@ class service extends Controller
                 }
                 $data['data'] = $this->getDataByJson($query, $where);
             }
-						if ($data['data'] === false) {
-								$data['data'] = array();
-						}
+            if ($data['data'] === false) {
+                $data['data'] = array();
+            }
             $data['error'] = $this->db->error();
             $data['log'] = $this->db->log();
         }
