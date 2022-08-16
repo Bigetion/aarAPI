@@ -37,12 +37,18 @@ class select extends Controller
                 unset($count_where["ORDER"]);
                 unset($count_where["LIMIT"]);
                 $data['total_rows'] = $this->db->count($table, $join, $column[0], $count_where);
+                if (isset($where['GROUP'])) {
+                    $data['total_rows'] = count($this->db->select($table, $join, $column, $count_where));
+                }
                 $data['data'] = $this->db->select($table, $join, $column, $where);
             } else {
                 $count_where = $where;
                 unset($count_where["ORDER"]);
                 unset($count_where["LIMIT"]);
                 $data['total_rows'] = $this->db->count($table, $column[0], $count_where);
+                if (isset($where['GROUP'])) {
+                    $data['total_rows'] = count($this->db->select($table, $join, $column, $count_where));
+                }
                 $data['data'] = $this->db->select($table, $column, $where);
             }
         }
