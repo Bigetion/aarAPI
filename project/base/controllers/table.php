@@ -30,6 +30,7 @@ class table extends Controller
         }
         if (is_string($json_data['query'])) {
             $query = $json_data['query'];
+            $total_rows_query = $json_data['total_rows_query'];
             $where = "";
             if (isset($post_data['where'])) {
                 $where = $post_data['where'];
@@ -43,12 +44,24 @@ class table extends Controller
                     $where_value[] = $wv;
                 }
                 $query = str_replace($where_key, $where_value, $query);
+                $total_rows_query = str_replace($where_key, $where_value, $total_rows_query);
                 $where = "";
             }
             $data['total_rows'] = 0;
             $data['data'] = $this->db->query($query . " " . $where);
             if ($data['data']) {
                 $data['data'] = $data['data']->fetchAll(PDO::FETCH_ASSOC);
+                $data['total_rows'] = $this->db->query($total_rows_query . " " . $where);
+                $data['total_rows'] = $data['total_rows']->fetchAll(PDO::FETCH_ASSOC);
+                if (count($data['total_rows']) > 0) {
+                    if (strpos(strtolower($total_rows_query), 'group by') !== false) {
+                        $data['total_rows'] = count($data['total_rows']);
+                    } else {
+                        if (isset($data['total_rows'][0]['total_rows'])) {
+                            $data['total_rows'] = (int) $data['total_rows'][0]['total_rows'];
+                        }
+                    }
+                }
             } else {
                 $data['data'] = array();
             }
