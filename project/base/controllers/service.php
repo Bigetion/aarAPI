@@ -123,7 +123,9 @@ class service extends Controller
                         } else {
                             $where = array();
                             if (isset($post_data['where'])) {
-                                $where = $post_data['where'][$key];
+                                if (isset($post_data['where'][$key])) {
+                                    $where = $post_data['where'][$key];
+                                }
                             }
                             $data['data'][] = $this->getDataByJson($q, $where);
                         }
