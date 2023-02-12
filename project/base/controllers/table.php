@@ -74,6 +74,9 @@ class table extends Controller
             if (isset($post_data['where'])) {
                 $where = $post_data['where'];
             }
+            if (isset($json_data['default_order']) && !isset($where["ORDER"])) {
+                $where["ORDER"] = $json_data['default_order'];
+            }
 
             if (isset($json_data['join'])) {
                 $join = $json_data['join'];

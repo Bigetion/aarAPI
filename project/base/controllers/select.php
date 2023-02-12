@@ -9,7 +9,11 @@ class select extends Controller
     {
         $post_data = $this->render->json_post();
         $name = $post_data['name'];
-        $data = json_decode(file_get_contents('project/base/config/select-view/' . $name . '.json'), true);
+        if (file_exists('project/base/config/select-view/' . id_role . '/' . $name . '.json')) {
+            $data = json_decode(file_get_contents('project/base/config/select-view/' . id_role . '/' . $name . '.json'), true);
+        } else if (file_exists('project/base/config/select-view/' . $name . '.json')) {
+            $data = json_decode(file_get_contents('project/base/config/select-view/' . $name . '.json'), true);
+        }
         $this->render->json($data);
     }
 
@@ -17,7 +21,11 @@ class select extends Controller
     {
         $post_data = $this->render->json_post();
         $name = $post_data['name'];
-        $json_data = json_decode(file_get_contents('project/base/config/select-view/' . $name . '.json'), true);
+        if (file_exists('project/base/config/select-view/' . id_role . '/' . $name . '.json')) {
+            $json_data = json_decode(file_get_contents('project/base/config/select-view/' . id_role . '/' . $name . '.json'), true);
+        } else if (file_exists('project/base/config/select-view/' . $name . '.json')) {
+            $json_data = json_decode(file_get_contents('project/base/config/select-view/' . $name . '.json'), true);
+        }
         if (is_string($json_data['query'])) {
             $query = $json_data['query'];
             $data['total_rows'] = 0;
@@ -26,9 +34,12 @@ class select extends Controller
             $json_data = $json_data['query'];
             $table = $json_data['table'];
             $column = $json_data['column'];
-            $where = null;
+            $where = array();
             if (isset($post_data['where'])) {
                 $where = $post_data['where'];
+            }
+            if (isset($json_data['default_order']) && !isset($where["ORDER"])) {
+                $where["ORDER"] = $json_data['default_order'];
             }
 
             if (isset($json_data['join'])) {
