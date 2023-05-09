@@ -7,5 +7,6 @@ return array(
     'password' => '',
     'charset' => 'utf8',
     'port' => 3306,
+    'timezone' => 'Asia/Jakarta',
 )
 ?>
