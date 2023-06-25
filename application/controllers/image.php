@@ -118,12 +118,17 @@ class image extends Main
         $id_image = subsegment(-1);
         $base_path = explode('/', str_replace('://', '', base_url));
         $path = subsegment(count($base_path) + 1, -1);
-        $path = 'application/images/' . $path;
+        if (!empty($path)) {
+            $path = 'application/images/' . $path;
+        } else {
+            $path = 'application/images';
+        }
+
+        $fileOut = "application/images/default.png";
         if (file_exists($path . "/default.png")) {
             $fileOut = $path . "/default.png";
-        } else {
-            $fileOut = "application/images/default.png";
         }
+
         if (is_dir($path)) {
             $images = load_recursive($path, 0, array('jpg', 'jpeg', 'gif', 'png'));
             foreach ($images as $image) {
@@ -132,6 +137,7 @@ class image extends Main
                 $filename = $path_info['filename'];
                 if ($filename == $id_image || $basename == $id_image) {
                     $fileOut = $image;
+                    break;
                 }
             }
         }
@@ -145,12 +151,31 @@ class image extends Main
         $this->render->image($fileOut);
     }
 
-    public function getBase64()
+    public function generateBase64($path_string)
     {
-        $id_image = subsegment(-1);
-        $base_path = explode('/', str_replace('://', '', base_url));
-        $path = subsegment(count($base_path) + 1, -1);
-        $path = 'application/images/' . $path;
+        $parse_data = parse_url($path_string);
+
+        $paths = explode("/", $parse_data['path']);
+        $path_count = count($paths);
+
+        $new_paths = explode("/", $parse_data['path']);
+        array_pop($new_paths);
+
+        $params = array();
+        if (isset($parse_data['query'])) {
+            parse_str($parse_data['query'], $params);
+        }
+
+        $path = implode("/", $new_paths);
+        $id_image = "default.png";
+        if ($path_count > 0) {
+            $id_image = $paths[$path_count - 1];
+        }
+        if (!empty($path)) {
+            $path = 'application/images/' . $path;
+        } else {
+            $path = 'application/images';
+        }
         if (file_exists($path . "/default.png")) {
             $fileOut = $path . "/default.png";
         } else {
@@ -169,14 +194,43 @@ class image extends Main
         }
         $type = pathinfo($fileOut, PATHINFO_EXTENSION);
         $img = file_get_contents($fileOut);
-        $data['base64'] = 'data:image/' . $type . ';base64,' . base64_encode($img);
+        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($img);
         if (isset($_GET['w']) && isset($_GET['h'])) {
-            $data['base64'] = $this->imageresize->fromFile($fileOut)->resize($_GET['w'], $_GET['h'])->toDataUri();
+            $base64 = $this->imageresize->fromFile($fileOut)->resize($_GET['w'], $_GET['h'])->toDataUri();
         } else if (isset($_GET['w'])) {
-            $data['base64'] = $this->imageresize->fromFile($fileOut)->resize($_GET['w'])->toDataUri();
+            $base64 = $this->imageresize->fromFile($fileOut)->resize($_GET['w'])->toDataUri();
         } else if (isset($_GET['h'])) {
-            $data['base64'] = $this->imageresize->fromFile($fileOut)->resize(false, $_GET['h'])->toDataUri();
+            $base64 = $this->imageresize->fromFile($fileOut)->resize(false, $_GET['h'])->toDataUri();
         }
+        return $base64;
+    }
+
+    public function getBase64()
+    {
+        $id_image = subsegment(-1);
+        $base_path = explode('/', str_replace('://', '', base_url));
+        $path = subsegment(count($base_path) + 1, -1);
+        $data = array(
+            "base64" => $this->generateBase64("$path/$id_image"),
+        );
         $this->render->json($data);
     }
+
+    public function getBase64Array()
+    {
+        $post_data = $this->render->json_post();
+        $base64 = array();
+
+        if (isset($post_data['images'])) {
+            if (is_array($post_data['images'])) {
+                foreach ($post_data['images'] as $image) {
+                    $base64[] = $this->generateBase64($image);
+                }
+            }
+        }
+        $data = array("base64" => $base64);
+
+        $this->render->json($data);
+    }
+
 }
