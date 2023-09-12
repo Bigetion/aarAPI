@@ -58,13 +58,16 @@ class image extends Main
             || ($mime == "image/x-png")
             || ($mime == "image/png"))
             && in_array($extension, $allowedExts)) {
-            $name = sha1(microtime()) . "." . $extension;
+            $name = sha1(microtime());
 
             if (isset($_POST['filename'])) {
-                $name = $_POST['filename'] . "." . $extension;
+                $name = $_POST['filename'];
             }
 
             $filepath = $path . '/' . $name;
+            $file_pattern = "$filepath.*";
+            array_map("unlink", glob($file_pattern));
+            $filepath = $filepath . "." . $extension;
             if (move_uploaded_file($_FILES["image"]["tmp_name"], $filepath)) {
                 $this->imageresize->fromFile($filepath)->toFile($filepath, null, 80);
                 $this->set->success_message(true);
