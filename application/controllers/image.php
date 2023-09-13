@@ -179,11 +179,12 @@ class image extends Main
         } else {
             $path = 'application/images';
         }
+        
+        $fileOut = "application/images/default.png";
         if (file_exists($path . "/default.png")) {
             $fileOut = $path . "/default.png";
-        } else {
-            $fileOut = "application/images/default.png";
         }
+
         if (is_dir($path)) {
             $images = load_recursive($path, 0, array('jpg', 'jpeg', 'gif', 'png'));
             foreach ($images as $image) {
@@ -192,6 +193,7 @@ class image extends Main
                 $filename = $path_info['filename'];
                 if ($filename == $id_image || $basename == $id_image) {
                     $fileOut = $image;
+                    break;
                 }
             }
         }
