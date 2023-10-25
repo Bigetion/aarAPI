@@ -222,7 +222,7 @@ class DB
 				$options['password'],
 				$this->option
 			);
-			$this->pdo->exec("SET time_zone = '" . $options['timezone'] . "'");
+			// $this->pdo->exec("SET time_zone = '" . $options['timezone'] . "'");
 
 			foreach ($commands as $value)
 			{

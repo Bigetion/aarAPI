@@ -6,7 +6,7 @@
   trait ConditionsTrait {
 
     // Add conditions to filter data.
-    public function where( $fieldName = '', $condition = '', $value ) {
+    public function where( $fieldName = '', $condition = '', $value = '' ) {
       if ( empty( $fieldName ) ) show_error( 'SleekDB Error', 'Field name in conditional comparision can not be empty.' );
       if ( empty( $condition ) ) show_error( 'SleekDB Error', 'The comparison operator can not be empty.' );
       // Append the condition into the conditions variable.

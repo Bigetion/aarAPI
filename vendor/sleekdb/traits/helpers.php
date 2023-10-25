@@ -239,7 +239,7 @@
     }
 
     // Get nested properties of a store object.
-    private function getNestedProperty( $field = '', $data ) {
+    private function getNestedProperty( $field = '', $data = [] ) {
       if( is_array( $data ) AND ! empty( $field ) ) {
         // Dive deep step by step.
         foreach( explode( '.', $field ) as $i ) {
