@@ -90,8 +90,18 @@ class image extends Main
             $path = 'application/images/' . $post_data['path'];
             $img = $post_data['img'];
             $filename = $path . '/' . $img;
-            if (file_exists($filename)) {
-                if (unlink($path . '/' . $img)) {
+            $result = glob("$filename.*");
+
+            if (count($result) > 0) {
+                $success = array();
+                foreach ($result as $file) {
+                    if (unlink($file)) {
+                        $success[] = 1;
+                    } else {
+                        $success[] = 0;
+                    }
+                }
+                if (!array_search(0, $success)) {
                     $this->set->success_message(true);
                 }
             }
@@ -179,7 +189,7 @@ class image extends Main
         } else {
             $path = 'application/images';
         }
-        
+
         $fileOut = "application/images/default.png";
         if (file_exists($path . "/default.png")) {
             $fileOut = $path . "/default.png";
