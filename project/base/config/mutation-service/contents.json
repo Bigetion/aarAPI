@@ -1,0 +1,27 @@
+{
+	"table": "contents",
+	"roles": {
+		"insert": [1],
+		"update": [1],
+		"delete": [1]
+	},
+	"primary_key": "id",
+	"fields": [
+		{
+			"id": "title",
+			"validation": ""
+		},
+		{
+			"id": "title_slug",
+			"validation": ""
+		},
+		{
+			"id": "content",
+			"validation": ""
+		},
+		{
+			"id": "image",
+			"validation": ""
+		}
+	]
+}

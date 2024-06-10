@@ -1,29 +1,36 @@
 {
-  "table": "users",
-  "roles": {
-    "insert": [1],
-    "update": [1],
-    "delete": [1]
-  },
-  "primary_key": "id_user",
-  "fields": [{
-    "id": "username",
-    "validation": ""
-  },{
-    "id": "name",
-    "validation": ""
-  },{
-    "id": "password",
-    "validation": "",
-    "type": "password"
-  },{
-    "id": "id_role",
-    "validation": ""
-  },{
-    "id": "id_type",
-    "validation": ""
-  },{
-    "id": "id_external",
-    "validation": ""
-  }]
+	"table": "users",
+	"roles": {
+		"insert": [1],
+		"update": [1],
+		"delete": [1]
+	},
+	"primary_key": "id_user",
+	"fields": [
+		{
+			"id": "username",
+			"validation": ""
+		},
+		{
+			"id": "name",
+			"validation": ""
+		},
+		{
+			"id": "password",
+			"validation": "",
+			"type": "password"
+		},
+		{
+			"id": "id_role",
+			"validation": ""
+		},
+		{
+			"id": "id_type",
+			"validation": ""
+		},
+		{
+			"id": "id_external",
+			"validation": ""
+		}
+	]
 }

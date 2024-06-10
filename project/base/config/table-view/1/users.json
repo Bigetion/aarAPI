@@ -1,37 +1,41 @@
 {
-  "title": "Pengguna",
-  "primary_key": "id_user",
-  "columns": [{
-    "text": "Username",
-    "value": "username",
-    "sortable": true,
-    "align": "left"
-  },{
-    "text": "Name",
-    "value": "name",
-    "sortable": true,
-    "align": "left"
-  },{
-    "text": "Role",
-    "value": "role_name",
-    "sortable": true,
-    "align": "left"
-  }],
-  "query": {
-    "table": "users",
-    "join": {
-      "[>]roles" : "id_role"
-    },
-    "column": [
-      "users.id_user",
-      "users.id_role",
-      "users.id_external",
-      "users.username",
-      "users.name",
-      "roles.role_name"
-    ],
-    "where": {
-      "id_role[!]": 2
-    }
-  }
+	"title": "Pengguna",
+	"primary_key": "id_user",
+	"columns": [
+		{
+			"text": "Username",
+			"value": "username",
+			"sortable": true,
+			"align": "left"
+		},
+		{
+			"text": "Name",
+			"value": "name",
+			"sortable": true,
+			"align": "left"
+		},
+		{
+			"text": "Role",
+			"value": "role_name",
+			"sortable": true,
+			"align": "left"
+		}
+	],
+	"query": {
+		"table": "users",
+		"join": {
+			"[>]roles": "id_role"
+		},
+		"column": [
+			"users.id_user",
+			"users.id_role",
+			"users.id_external",
+			"users.username",
+			"users.name",
+			"roles.role_name"
+		],
+		"where": {
+			"id_role[!]": 2
+		}
+	}
 }

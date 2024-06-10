@@ -1,0 +1,22 @@
+{
+	"title": "Tags",
+	"primary_key": "id",
+	"columns": [
+		{
+			"text": "Name",
+			"value": "name",
+			"sortable": true,
+			"align": "left"
+		},
+		{
+			"text": "Description",
+			"value": "description",
+			"sortable": true,
+			"align": "left"
+		}
+	],
+	"query": {
+		"table": "tags",
+		"column": ["id", "name", "description"]
+	}
+}

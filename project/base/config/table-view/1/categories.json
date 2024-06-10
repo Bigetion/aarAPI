@@ -1,0 +1,22 @@
+{
+	"title": "Categories",
+	"primary_key": "id",
+	"columns": [
+		{
+			"text": "Name",
+			"value": "name",
+			"sortable": true,
+			"align": "left"
+		},
+		{
+			"text": "Description",
+			"value": "description",
+			"sortable": true,
+			"align": "left"
+		}
+	],
+	"query": {
+		"table": "categories",
+		"column": ["id", "name", "description"]
+	}
+}
