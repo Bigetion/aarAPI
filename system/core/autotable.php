@@ -10,14 +10,14 @@ class Autotable
         $db =  & load_class('DB');
         $database_type = '';
         $crypt =  & load_class('Crypt');
-        $tabel = $db->get_table();
+        $table = $db->get_table();
         $options = include 'application/config/database.php';
 
         if (isset($options['database_type'])) {
             $database_type = strtolower($options['database_type']);
         }
 
-        if (!in_array('roles', $tabel)) {
+        if (!in_array('roles', $table)) {
 
             if ($database_type === 'pgsql') {
                 $db->exec("CREATE TABLE roles (
@@ -49,7 +49,7 @@ class Autotable
             $db->insert('roles', $data_role);
         }
 
-        if (!in_array('users', $tabel)) {
+        if (!in_array('users', $table)) {
             if ($database_type === 'pgsql') {
                 $db->exec("CREATE TABLE users (
 									id_user SERIAL PRIMARY KEY,
@@ -88,7 +88,7 @@ class Autotable
             $db->insert('users', $data_user);
         }
 
-        if (!in_array('short_link', $tabel)) {
+        if (!in_array('short_link', $table)) {
             if ($database_type === 'pgsql') {
                 $db->exec("CREATE TABLE users (
 									`id_link` SERIAL PRIMARY KEY,
