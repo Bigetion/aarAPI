@@ -1,6 +1,6 @@
-<?php 
+<?php
 return array(
-  'main_controller' => 'data',
-  'default_method' => 'index'
+    'main_controller' => 'home',
+    'default_method' => 'index',
 )
 ?>

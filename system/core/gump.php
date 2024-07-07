@@ -1,6 +1,5 @@
 <?php
 
-
 class GUMP
 {
     // Singleton instance of GUMP
@@ -25,9 +24,9 @@ class GUMP
      *
      * @return GUMP
      */
-    public static function get_instance(){
-        if(self::$instance === null)
-        {
+    public static function get_instance()
+    {
+        if (self::$instance === null) {
             self::$instance = new static();
         }
         return self::$instance;
@@ -49,11 +48,11 @@ class GUMP
     public function __construct($lang = 'en')
     {
         if ($lang) {
-            $lang_file = 'system/lang/'.$lang.'.php';
+            $lang_file = 'system/lang/' . $lang . '.php';
             if (file_exists($lang_file)) {
                 $this->lang = $lang;
             } else {
-                show_error('GUMP Error', 'Language with key "'.$lang.'" does not exist');
+                show_error('GUMP Error', 'Language with key "' . $lang . '" does not exist');
             }
         }
     }
@@ -126,9 +125,9 @@ class GUMP
      */
     public static function add_validator($rule, $callback, $error_message = null)
     {
-        $method = 'validate_'.$rule;
+        $method = 'validate_' . $rule;
         if (method_exists(__CLASS__, $method) || isset(self::$validation_methods[$rule])) {
-            show_error("GUMP Error","Validator rule '$rule' already exists.");
+            show_error("GUMP Error", "Validator rule '$rule' already exists.");
         }
         self::$validation_methods[$rule] = $callback;
         if ($error_message) {
@@ -148,9 +147,9 @@ class GUMP
      */
     public static function add_filter($rule, $callback)
     {
-        $method = 'filter_'.$rule;
+        $method = 'filter_' . $rule;
         if (method_exists(__CLASS__, $method) || isset(self::$filter_methods[$rule])) {
-            show_error("GUMP Error","Filter rule '$rule' already exists.");
+            show_error("GUMP Error", "Filter rule '$rule' already exists.");
         }
         self::$filter_methods[$rule] = $callback;
         return true;
@@ -165,14 +164,14 @@ class GUMP
      */
     public static function field($key, array $array, $default = null)
     {
-      if(!is_array($array)) {
-        return null;
-      }
-      if(isset($array[$key])) {
-        return $array[$key];
-      } else {
-        return $default;
-      }
+        if (!is_array($array)) {
+            return null;
+        }
+        if (isset($array[$key])) {
+            return $array[$key];
+        } else {
+            return $default;
+        }
     }
     /**
      * Getter/Setter for the validation rules.
@@ -236,10 +235,10 @@ class GUMP
      *
      * @throws Exception
      */
-     public function run_validation($data, $check_fields = false)
-     {
-        if(!isset($data)){
-            $data = array("_"=>"_");
+    public function run_validation($data, $check_fields = false)
+    {
+        if (!isset($data)) {
+            $data = array("_" => "_");
         }
         $data = $this->filter($data, $this->filter_rules());
         $validated = $this->validate(
@@ -249,11 +248,11 @@ class GUMP
             $this->check_fields($data);
         }
         if ($validated !== true) {
-           $set = & load_class('Set');
-           $error_params = array("error_params"=>$this->get_errors_array());
-           $set->error_message(true,$error_params);
+            $set =  & load_class('Set');
+            $error_params = array("error_params" => $this->get_errors_array());
+            $set->error_message(true, $error_params);
         }
-     }
+    }
     /**
      * Ensure that the field counts match the validation rule counts.
      *
@@ -359,19 +358,19 @@ class GUMP
                         $param = null;
                         // Check if we have rule parameters
                         if (strstr($rule, ',') !== false) {
-                            $rule   = explode(',', $rule);
-                            $method = 'validate_'.$rule[0];
-                            $param  = $rule[1];
-                            $rule   = $rule[0];
+                            $rule = explode(',', $rule);
+                            $method = 'validate_' . $rule[0];
+                            $param = $rule[1];
+                            $rule = $rule[0];
                             // If there is a reference to a field
                             if (preg_match('/(?:(?:^|;)_([a-z_]+))/', $param, $matches)) {
                                 // If provided parameter is a field
                                 if (isset($input[$matches[1]])) {
-                                    $param = str_replace('_'.$matches[1], $input[$matches[1]], $param);
+                                    $param = str_replace('_' . $matches[1], $input[$matches[1]], $param);
                                 }
                             }
                         } else {
-                            $method = 'validate_'.$rule;
+                            $method = 'validate_' . $rule;
                         }
                         //self::$validation_methods[$rule] = $callback;
                         if (is_callable(array($this, $method))) {
@@ -383,9 +382,9 @@ class GUMP
                                     $this->errors[] = $result;
                                 }
                             }
-                        } elseif(isset(self::$validation_methods[$rule])) {
+                        } elseif (isset(self::$validation_methods[$rule])) {
                             $result = call_user_func(self::$validation_methods[$rule], $field, $input, $param);
-                            if($result === false) {
+                            if ($result === false) {
                                 if (array_search($result['field'], array_column($this->errors, 'field')) === false) {
                                     $this->errors[] = array(
                                         'field' => $field,
@@ -396,7 +395,7 @@ class GUMP
                                 }
                             }
                         } else {
-                            show_error("GUMP Error","Validator method '$method' does not exist.");
+                            show_error("GUMP Error", "Validator method '$method' does not exist.");
                         }
                     }
                 }
@@ -468,7 +467,7 @@ class GUMP
      */
     protected function get_messages()
     {
-        $lang_file = 'system/lang/'.$this->lang.'.php';
+        $lang_file = 'system/lang/' . $this->lang . '.php';
         $messages = require $lang_file;
         if ($validation_methods_errors = self::$validation_methods_errors) {
             $messages = array_merge($messages, $validation_methods_errors);
@@ -509,10 +508,10 @@ class GUMP
                 if (is_array($param)) {
                     $param = implode(', ', $param);
                 }
-                $message = str_replace('{param}', $param, str_replace('{field}', '<span class="'.$field_class.'">'.$field.'</span>', $messages[$e['rule']]));
+                $message = str_replace('{param}', $param, str_replace('{field}', '<span class="' . $field_class . '">' . $field . '</span>', $messages[$e['rule']]));
                 $resp[] = $message;
             } else {
-                show_error('GUMP Error', 'Rule "'.$e['rule'].'" does not have an error message');
+                show_error('GUMP Error', 'Rule "' . $e['rule'] . '" does not have an error message');
             }
         }
         if (!$convert_to_string) {
@@ -540,8 +539,7 @@ class GUMP
         $resp = array();
         // Error messages
         $messages = $this->get_messages();
-        foreach ($this->errors as $e)
-        {
+        foreach ($this->errors as $e) {
             $field = ucwords(str_replace(array('_', '-'), chr(32), $e['field']));
             $param = $e['param'];
             // Let's fetch explicitly if the field names exist
@@ -552,7 +550,7 @@ class GUMP
                     $param = self::$fields[$e['param']];
                 }
             }
-            
+
             // Messages
             if (isset($messages[$e['rule']])) {
                 // Show first validation error and don't allow to be overwritten
@@ -564,7 +562,7 @@ class GUMP
                     $resp[$e['field']] = $message;
                 }
             } else {
-                show_error('GUMP Error', 'Rule "'.$e['rule'].'" does not have an error message');
+                show_error('GUMP Error', 'Rule "' . $e['rule'] . '" does not have an error message');
             }
         }
         return $resp;
@@ -601,15 +599,15 @@ class GUMP
                     $input_array = array(&$input[$field]);
                 }
                 foreach ($input_array as &$value) {
-                    if (is_callable(array($this, 'filter_'.$filter))) {
-                        $method = 'filter_'.$filter;
+                    if (is_callable(array($this, 'filter_' . $filter))) {
+                        $method = 'filter_' . $filter;
                         $value = $this->$method($value, $params);
                     } elseif (function_exists($filter)) {
                         $value = $filter($value);
                     } elseif (isset(self::$filter_methods[$filter])) {
                         $value = call_user_func(self::$filter_methods[$filter], $value, $params);
                     } else {
-                        show_error("GUMP Error","Filter method '$filter' does not exist.");
+                        show_error("GUMP Error", "Filter method '$filter' does not exist.");
                     }
                 }
             }
@@ -770,19 +768,19 @@ class GUMP
      */
     protected function filter_ms_word_characters($value, $params = null)
     {
-        $word_open_double  = '“';
+        $word_open_double = '“';
         $word_close_double = '”';
-        $web_safe_double   = '"';
+        $web_safe_double = '"';
         $value = str_replace(array($word_open_double, $word_close_double), $web_safe_double, $value);
-        $word_open_single  = '‘';
+        $word_open_single = '‘';
         $word_close_single = '’';
-        $web_safe_single   = "'";
+        $web_safe_single = "'";
         $value = str_replace(array($word_open_single, $word_close_single), $web_safe_single, $value);
-        $word_em     = '–';
+        $word_em = '–';
         $web_safe_em = '-';
         $value = str_replace($word_em, $web_safe_em, $value);
         $word_ellipsis = '…';
-        $web_safe_em   = '...';
+        $web_safe_em = '...';
         $value = str_replace($word_ellipsis, $web_safe_em, $value);
         return $value;
     }
@@ -874,10 +872,10 @@ class GUMP
             return;
         } else {
             return array(
-                    'field' => $field,
-                    'value' => $value,
-                    'rule' => __FUNCTION__,
-                    'param' => $param,
+                'field' => $field,
+                'value' => $value,
+                'rule' => __FUNCTION__,
+                'param' => $param,
             );
         }
     }
@@ -1216,8 +1214,8 @@ class GUMP
         if (!isset($input[$field]) || empty($input[$field]) && $input[$field] !== 0) {
             return;
         }
-        $booleans = array('1','true',true,1,'0','false',false,0,'yes','no','on','off');
-        if (in_array($input[$field], $booleans, true )) {
+        $booleans = array('1', 'true', true, 1, '0', 'false', false, 0, 'yes', 'no', 'on', 'off');
+        if (in_array($input[$field], $booleans, true)) {
             return;
         }
         return array(
@@ -1514,7 +1512,7 @@ class GUMP
             'H' => 17, 'I' => 18, 'J' => 19, 'K' => 20, 'L' => 21, 'M' => 22,
             'N' => 23, 'O' => 24, 'P' => 25, 'Q' => 26, 'R' => 27, 'S' => 28,
             'T' => 29, 'U' => 30, 'V' => 31, 'W' => 32, 'X' => 33, 'Y' => 34,
-            'Z' => 35, 'B' => 11
+            'Z' => 35, 'B' => 11,
         );
         if (!preg_match("/\A[A-Z]{2}\d{2} ?[A-Z\d]{4}( ?\d{4}){1,} ?\d{1,4}\z/", $input[$field])) {
             return array(
@@ -1525,7 +1523,7 @@ class GUMP
             );
         }
         $iban = str_replace(' ', '', $input[$field]);
-        $iban = substr($iban, 4).substr($iban, 0, 4);
+        $iban = substr($iban, 4) . substr($iban, 0, 4);
         $iban = strtr($iban, $character);
         if (bcmod($iban, 97) != 1) {
             return array(
@@ -1539,7 +1537,7 @@ class GUMP
     /**
      * Determine if the provided input is a valid date (ISO 8601)
      * or specify a custom format.
-     * 
+     *
      * Usage: '<index>' => 'date'
      *
      * @param string $field
@@ -1554,27 +1552,24 @@ class GUMP
             return;
         }
         // Default
-        if (!$param)
-        {
+        if (!$param) {
             $cdate1 = date('Y-m-d', strtotime($input[$field]));
             $cdate2 = date('Y-m-d H:i:s', strtotime($input[$field]));
-            if ($cdate1 != $input[$field] && $cdate2 != $input[$field])
-            {
+            if ($cdate1 != $input[$field] && $cdate2 != $input[$field]) {
                 return array(
-                    'field'      => $field,
-                    'value'      => $input[$field],
-                    'rule'       => __FUNCTION__,
+                    'field' => $field,
+                    'value' => $input[$field],
+                    'rule' => __FUNCTION__,
                     'param' => $param,
                 );
             }
         } else {
             $date = \DateTime::createFromFormat($param, $input[$field]);
-            if ($date === false || $input[$field] != date($param, $date->getTimestamp()))
-            {
+            if ($date === false || $input[$field] != date($param, $date->getTimestamp())) {
                 return array(
-                    'field'      => $field,
-                    'value'      => $input[$field],
-                    'rule'       => __FUNCTION__,
+                    'field' => $field,
+                    'value' => $input[$field],
+                    'rule' => __FUNCTION__,
                     'param' => $param,
                 );
             }
@@ -1684,31 +1679,31 @@ class GUMP
             );
         }
     }
-      /**
-       * Checks if a file was uploaded.
-       *
-       * Usage: '<index>' => 'required_file'
-       *
-       * @param  string $field
-       * @param  array $input
-       *
-       * @return mixed
-       */
-      protected function validate_required_file($field, $input, $param = null)
-      {
-          if (!isset($input[$field])) {
-              return;
-          }
-          if (is_array($input[$field]) && $input[$field]['error'] !== 4) {
-              return;
-          }
-          return array(
-              'field' => $field,
-              'value' => $input[$field],
-              'rule' => __FUNCTION__,
-              'param' => $param,
-          );
-      }
+    /**
+     * Checks if a file was uploaded.
+     *
+     * Usage: '<index>' => 'required_file'
+     *
+     * @param  string $field
+     * @param  array $input
+     *
+     * @return mixed
+     */
+    protected function validate_required_file($field, $input, $param = null)
+    {
+        if (!isset($input[$field])) {
+            return;
+        }
+        if (is_array($input[$field]) && $input[$field]['error'] !== 4) {
+            return;
+        }
+        return array(
+            'field' => $field,
+            'value' => $input[$field],
+            'rule' => __FUNCTION__,
+            'param' => $param,
+        );
+    }
     /**
      * Check the uploaded file for extension for now
      * checks only the ext should add mime type check.
@@ -1784,7 +1779,7 @@ class GUMP
             return;
         }
         if (preg_match("/\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/", $input[$field])) {
-          return;
+            return;
         }
         return array(
             'field' => $field,
@@ -1835,10 +1830,10 @@ class GUMP
         $regex = '/^(\d[\s-]?)?[\(\[\s-]{0,2}?\d{3}[\)\]\s-]{0,2}?\d{3}[\s-]?\d{4}$/i';
         if (!preg_match($regex, $input[$field])) {
             return array(
-              'field' => $field,
-              'value' => $input[$field],
-              'rule' => __FUNCTION__,
-              'param' => $param,
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
             );
         }
     }
@@ -1860,10 +1855,10 @@ class GUMP
         $regex = $param;
         if (!preg_match($regex, $input[$field])) {
             return array(
-              'field' => $field,
-              'value' => $input[$field],
-              'rule' => __FUNCTION__,
-              'param' => $param,
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
             );
         }
     }
@@ -1884,10 +1879,10 @@ class GUMP
         }
         if (!is_string($input[$field]) || !is_object(json_decode($input[$field]))) {
             return array(
-              'field' => $field,
-              'value' => $input[$field],
-              'rule' => __FUNCTION__,
-              'param' => $param,
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
             );
         }
     }
@@ -1906,12 +1901,12 @@ class GUMP
         if (!isset($input[$field]) || empty($input[$field])) {
             return;
         }
-        if (!is_array($input[$field]) || sizeof($input[$field]) < (int)$param) {
+        if (!is_array($input[$field]) || sizeof($input[$field]) < (int) $param) {
             return array(
-              'field' => $field,
-              'value' => $input[$field],
-              'rule' => __FUNCTION__,
-              'param' => $param,
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
             );
         }
     }
@@ -1930,11 +1925,11 @@ class GUMP
         if (!isset($input[$field]) || empty($input[$field])) {
             return;
         }
-        if (!is_array($input[$field]) || sizeof($input[$field]) > (int)$param) {
+        if (!is_array($input[$field]) || sizeof($input[$field]) > (int) $param) {
             return array(
                 'field' => $field,
                 'value' => $input[$field],
-                'rule'  => __FUNCTION__,
+                'rule' => __FUNCTION__,
                 'param' => $param,
             );
         }
@@ -1954,15 +1949,13 @@ class GUMP
         if (!isset($input[$field]) || empty($input[$field])) {
             return;
         }
-        if (!is_array($input[$field]) || sizeof($input[$field]) == (int)$param) {
+        if (!is_array($input[$field]) || sizeof($input[$field]) == (int) $param) {
             return array(
                 'field' => $field,
                 'value' => $input[$field],
-                'rule'  => __FUNCTION__,
+                'rule' => __FUNCTION__,
                 'param' => $param,
             );
         }
     }
 }
-
-?>

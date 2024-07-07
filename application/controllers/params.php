@@ -48,7 +48,8 @@ class Params extends Main
                     }
 
                 }
-            }}
+            }
+        }
         if (empty($data)) {
             $data[] = '-----';
         }

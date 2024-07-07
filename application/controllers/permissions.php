@@ -42,7 +42,8 @@ class Permissions extends Main
                     }
 
                 }
-            }}
+            }
+        }
         if (empty($data)) {
             $data[] = '-----';
         }

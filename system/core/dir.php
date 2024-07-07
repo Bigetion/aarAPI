@@ -1,18 +1,24 @@
-<?php  if ( ! defined('INDEX')) exit('No direct script access allowed');
+<?php if (!defined('INDEX')) {
+    exit('No direct script access allowed');
+}
 
-class Dir {
-    function delete_file($file_path) {
+class Dir
+{
+    public function delete_file($file_path)
+    {
         if (file_exists($file_path)) {
             unlink($file_path);
         }
     }
 
-    function get_dir($path) {
+    public function get_dir($path)
+    {
         $results = scandir($path);
         $dir = array();
         foreach ($results as $result) {
-            if ($result === '.' or $result === '..')
+            if ($result === '.' or $result === '..') {
                 continue;
+            }
 
             if (is_dir($path . '/' . $result)) {
                 //code to use if directory
@@ -22,7 +28,8 @@ class Dir {
         return $dir;
     }
 
-    function remove_dir($folder) {
+    public function remove_dir($folder)
+    {
         $files = glob($folder . DIRECTORY_SEPARATOR . '*');
         foreach ($files as $file) {
             if ($file == '.' || $file == '..') {
@@ -37,11 +44,12 @@ class Dir {
         rmdir($folder);
     }
 
-    function create_dir($path) {
-        if (!is_dir($path))
+    public function create_dir($path)
+    {
+        if (!is_dir($path)) {
             mkdir($path, 0777, true);
+        }
+
     }
 
 }
-
-?>

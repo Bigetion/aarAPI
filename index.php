@@ -2,7 +2,8 @@
 error_reporting(-1);
 ini_set('memory_limit', '128M');
 define('INDEX', '');
-function get_time() {
+function get_time()
+{
     $time = microtime();
     $time = explode(' ', $time);
     $time = $time[1] + $time[0];
@@ -10,14 +11,15 @@ function get_time() {
 }
 $start_time = get_time();
 define('start_time', $start_time);
-function load_recursive($nama_folder, $level = 0, $jenis_file = array('php')) {
+function load_recursive($nama_folder, $level = 0, $jenis_file = array('php'))
+{
     $data = array();
     foreach (ListIn($nama_folder, $nama_folder . '/') as $value) {
         $exts = explode('.', $value);
-		$ext = $exts[count($exts) - 1];
-		if(in_array($ext,$jenis_file)){
-			$data[] = $value;
-		}
+        $ext = $exts[count($exts) - 1];
+        if (in_array($ext, $jenis_file)) {
+            $data[] = $value;
+        }
     }
     if ($level != 0) {
         $val = array();
@@ -29,9 +31,10 @@ function load_recursive($nama_folder, $level = 0, $jenis_file = array('php')) {
     }
     return $data;
 }
-function ListIn($dir, $prefix = '') {
+function ListIn($dir, $prefix = '')
+{
     if (!file_exists($dir)) {
-        show_error('Dir not exist',$dir. ' not exist');
+        show_error('Dir not exist', $dir . ' not exist');
         exit;
     } else {
         $dir = rtrim($dir, '\\/');
@@ -50,54 +53,58 @@ function ListIn($dir, $prefix = '') {
         return $result;
     }
 }
-function load_file($nama_folder) {
+function load_file($nama_folder)
+{
     $namafile = array();
     $i = 0;
-	if($nama_folder!="index.html"){
-    if ($handle = opendir($nama_folder)) {
-        while (false !== ($entry = readdir($handle))) {
-            if ($entry != '.' && $entry != '..')
-                $namafile[$i] = $entry;
-            $i++;
+    if ($nama_folder != "index.html") {
+        if ($handle = opendir($nama_folder)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != '.' && $entry != '..') {
+                    $namafile[$i] = $entry;
+                }
+
+                $i++;
+            }
+            closedir($handle);
         }
-        closedir($handle);
     }
-	}
     rsort($namafile);
     return $namafile;
 }
-function is_loaded($class = '') {
+function is_loaded($class = '')
+{
     static $_is_loaded = array();
     if ($class != '') {
         $_is_loaded[strtolower($class)] = $class;
     }
     return $_is_loaded;
 }
-function &load_class($class) {
+function &load_class($class)
+{
     static $_classes = array();
     if (isset($_classes[$class])) {
         return $_classes[$class];
     }
     is_loaded($class);
-    if (class_exists($class))
+    if (class_exists($class)) {
         $_classes[$class] = new $class();
-    else {
+    } else {
         show_error();
         exit;
     }
     return $_classes[$class];
 }
 foreach (load_recursive('system') as $value) {
-	require_once $value;
+    require_once $value;
 }
 
 require_once 'vendor/autoload.php';
 
-$project = str_replace('-','_',segment(1));
-$controller = str_replace('-','_',segment(2));
-$method = str_replace('-','_',segment(3));
-$CONFIG = & load_class('Project');
+$project = str_replace('-', '_', segment(1));
+$controller = str_replace('-', '_', segment(2));
+$method = str_replace('-', '_', segment(3));
+$CONFIG =  & load_class('Project');
 session_start();
 ob_start("ob_gzhandler");
 $CONFIG->set_project($project)->set_controller($controller)->set_method($method)->render();
-?>

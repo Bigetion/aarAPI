@@ -7,7 +7,7 @@ class crawl
     private $html;
     private $tags;
     private $html_object;
-    
+
     private $jsonq;
 
     private function element_to_object($element, $level)
@@ -30,7 +30,10 @@ class crawl
                 }
                 $i += 1;
             }
-            if($level != "0") $obj["innerHTML"] = $innerHTML;
+            if ($level != "0") {
+                $obj["innerHTML"] = $innerHTML;
+            }
+
         }
         $this->tags[] = $obj;
         return $obj;
