@@ -7,9 +7,9 @@ class Autotable
 
     public function set_autotable()
     {
-        $db =  & load_class('DB');
+        $db = &load_class('DB');
         $database_type = '';
-        $crypt =  & load_class('Crypt');
+        $crypt = &load_class('Crypt');
         $table = $db->get_table();
         $options = include 'application/config/database.php';
 
@@ -21,19 +21,19 @@ class Autotable
 
             if ($database_type === 'pgsql') {
                 $db->exec("CREATE TABLE roles (
-									id_role SERIAL PRIMARY KEY,
-									role_name varchar(50) NOT NULL,
-									description varchar(255) NOT NULL,
-									permission text
-								)");
+                    id_role SERIAL PRIMARY KEY,
+                    role_name varchar(50) NOT NULL,
+                    description varchar(255) NOT NULL,
+                    permission text
+                )");
             } else {
                 $db->exec("CREATE TABLE `roles` (
-									`id_role` int(10) NOT NULL AUTO_INCREMENT,
-									`role_name` varchar(50) NOT NULL,
-									`description` varchar(255) NOT NULL,
-									`permission` text,
-									PRIMARY KEY (`id_role`)
-								)");
+                    `id_role` int(10) NOT NULL AUTO_INCREMENT,
+                    `role_name` varchar(50) NOT NULL,
+                    `description` varchar(255) NOT NULL,
+                    `permission` text,
+                    PRIMARY KEY (`id_role`)
+                )");
             }
 
             $data_role['id_role'] = '1';
@@ -45,32 +45,32 @@ class Autotable
             $data_role['id_role'] = '2';
             $data_role['role_name'] = 'Guest';
             $data_role['description'] = 'Pengunjung Website';
-            $data_role['permission'] = '';
+            $data_role['permission'] = 'page.home.index---base.scrap.index---base.scrap.getData---base.select.getSelectViewOptions---base.select.getData---base.service.getQueryServiceOptions---base.service.getData---base.service.getDataArray---base.service.executeMutation---base.service.executeMutationArray---base.sleek.getData---base.sleek.executeMutation---base.table.getTableViewOptions---base.table.getData---base.tree.getTreeViewOptions---base.tree.getData';
             $db->insert('roles', $data_role);
         }
 
         if (!in_array('users', $table)) {
             if ($database_type === 'pgsql') {
                 $db->exec("CREATE TABLE users (
-									id_user SERIAL PRIMARY KEY,
-									username varchar(100) NOT NULL,
-									name varchar(255) NOT NULL,
-									password text NOT NULL,
-									id_role int NOT NULL,
-									id_type smallint,
-									id_external bigint
-								)");
+                    id_user SERIAL PRIMARY KEY,
+                    username varchar(100) NOT NULL,
+                    name varchar(255) NOT NULL,
+                    password text NOT NULL,
+                    id_role int NOT NULL,
+                    id_type smallint,
+                    id_external bigint
+                )");
             } else {
                 $db->exec("CREATE TABLE `users` (
-									`id_user` int(10) NOT NULL AUTO_INCREMENT,
-									`username` varchar(100) NOT NULL,
-									`name` varchar(255) NOT NULL,
-									`password` text NOT NULL,
-									`id_role` int(10) NOT NULL,
-									`id_type` tinyint(1),
-									`id_external` bigint(20),
-									PRIMARY KEY (`id_user`)
-								)");
+                    `id_user` int(10) NOT NULL AUTO_INCREMENT,
+                    `username` varchar(100) NOT NULL,
+                    `name` varchar(255) NOT NULL,
+                    `password` text NOT NULL,
+                    `id_role` int(10) NOT NULL,
+                    `id_type` tinyint(1),
+                    `id_external` bigint(20),
+                    PRIMARY KEY (`id_user`)
+                )");
             }
 
             $data_user['id_user'] = '1';
@@ -91,22 +91,22 @@ class Autotable
         if (!in_array('short_link', $table)) {
             if ($database_type === 'pgsql') {
                 $db->exec("CREATE TABLE users (
-									`id_link` SERIAL PRIMARY KEY,
-									`link` varchar(100) NOT NULL,
-									`short_link` varchar(50) NOT NULL,
-									PRIMARY KEY (`id_link`),
-									UNIQUE KEY `short_link` (`short_link`),
-									UNIQUE KEY `link` (`link`)
-								)");
+                    `id_link` SERIAL PRIMARY KEY,
+                    `link` varchar(100) NOT NULL,
+                    `short_link` varchar(50) NOT NULL,
+                    PRIMARY KEY (`id_link`),
+                    UNIQUE KEY `short_link` (`short_link`),
+                    UNIQUE KEY `link` (`link`)
+                )");
             } else {
                 $db->exec("CREATE TABLE `short_link` (
-									`id_link` int(10) NOT NULL AUTO_INCREMENT,
-									`link` varchar(100) NOT NULL,
-									`short_link` varchar(50) NOT NULL,
-									PRIMARY KEY (`id_link`),
-									UNIQUE KEY `short_link` (`short_link`),
-									UNIQUE KEY `link` (`link`)
-								)");
+                    `id_link` int(10) NOT NULL AUTO_INCREMENT,
+                    `link` varchar(100) NOT NULL,
+                    `short_link` varchar(50) NOT NULL,
+                    PRIMARY KEY (`id_link`),
+                    UNIQUE KEY `short_link` (`short_link`),
+                    UNIQUE KEY `link` (`link`)
+                )");
             }
         }
     }
