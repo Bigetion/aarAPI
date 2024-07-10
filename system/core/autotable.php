@@ -7,9 +7,9 @@ class Autotable
 
     public function set_autotable()
     {
-        $db = &load_class('DB');
+        $db =  & load_class('DB');
         $database_type = '';
-        $crypt = &load_class('Crypt');
+        $crypt =  & load_class('Crypt');
         $table = $db->get_table();
         $options = include 'application/config/database.php';
 
@@ -19,14 +19,7 @@ class Autotable
 
         if (!in_array('roles', $table)) {
 
-            if ($database_type === 'pgsql') {
-                $db->exec("CREATE TABLE roles (
-                    id_role SERIAL PRIMARY KEY,
-                    role_name varchar(50) NOT NULL,
-                    description varchar(255) NOT NULL,
-                    permission text
-                )");
-            } else {
+            if ($database_type === 'mysql') {
                 $db->exec("CREATE TABLE `roles` (
                     `id_role` int(10) NOT NULL AUTO_INCREMENT,
                     `role_name` varchar(50) NOT NULL,
@@ -50,17 +43,7 @@ class Autotable
         }
 
         if (!in_array('users', $table)) {
-            if ($database_type === 'pgsql') {
-                $db->exec("CREATE TABLE users (
-                    id_user SERIAL PRIMARY KEY,
-                    username varchar(100) NOT NULL,
-                    name varchar(255) NOT NULL,
-                    password text NOT NULL,
-                    id_role int NOT NULL,
-                    id_type smallint,
-                    id_external bigint
-                )");
-            } else {
+            if ($database_type === 'mysql') {
                 $db->exec("CREATE TABLE `users` (
                     `id_user` int(10) NOT NULL AUTO_INCREMENT,
                     `username` varchar(100) NOT NULL,
@@ -69,6 +52,8 @@ class Autotable
                     `id_role` int(10) NOT NULL,
                     `id_type` tinyint(1),
                     `id_external` bigint(20),
+                    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                     PRIMARY KEY (`id_user`)
                 )");
             }
@@ -89,26 +74,16 @@ class Autotable
         }
 
         if (!in_array('short_link', $table)) {
-            if ($database_type === 'pgsql') {
-                $db->exec("CREATE TABLE users (
-                    `id_link` SERIAL PRIMARY KEY,
-                    `link` varchar(100) NOT NULL,
-                    `short_link` varchar(50) NOT NULL,
-                    PRIMARY KEY (`id_link`),
-                    UNIQUE KEY `short_link` (`short_link`),
-                    UNIQUE KEY `link` (`link`)
-                )");
-            } else {
+            if ($database_type === 'mysql') {
                 $db->exec("CREATE TABLE `short_link` (
                     `id_link` int(10) NOT NULL AUTO_INCREMENT,
                     `link` varchar(100) NOT NULL,
                     `short_link` varchar(50) NOT NULL,
                     PRIMARY KEY (`id_link`),
                     UNIQUE KEY `short_link` (`short_link`),
-                    UNIQUE KEY `link` (`link`)
+                    UNIQUE KEY `link` (`link`),
                 )");
             }
         }
     }
-
 }
