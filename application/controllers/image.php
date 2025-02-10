@@ -90,12 +90,16 @@ class image extends Main
             $path = 'application/images/' . $post_data['path'];
             $img = $post_data['img'];
             $filename = $path . '/' . $img;
-            $result = glob("$filename.*");
+            $directory = dirname($filename);
+            $basename = pathinfo($filename, PATHINFO_FILENAME);
+            $files = scandir($directory);
+            $matchingFiles = preg_grep("/^" . preg_quote($basename, '/') . "\.[a-zA-Z0-9]+$/", $files);
 
+            $result = array_values($matchingFiles);
             if (count($result) > 0) {
                 $success = array();
                 foreach ($result as $file) {
-                    if (unlink($file)) {
+                    if (unlink("$directory/$file")) {
                         $success[] = 1;
                     } else {
                         $success[] = 0;
