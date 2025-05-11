@@ -200,6 +200,31 @@ class service extends Controller
         $this->render->json($data);
     }
 
+    private function replaceInsertedId($data, $id) {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->replaceInsertedId($value, $id);
+            } elseif (is_string($value)) {
+                $data[$key] = str_replace('__ID__', $id, $value);
+            }
+        }
+        return $data;
+    }
+
+    private function afterInsert($id, $post_data) {
+        if (isset($post_data[0])) {
+            $responses = [];
+            foreach ($post_data as $item) {
+                $replaced = $this->replaceInsertedId($item, $id);
+                $responses[] = $this->getExecuteMutationResult($replaced);
+            }
+            return $responses;
+        } else {
+            $post_data = $this->replaceInsertedId($post_data, $id);
+            return $this->getExecuteMutationResult($post_data);
+        }
+    }
+    
     private function getExecuteMutationResult($post_data)
     {
         $name = $post_data['name'];
@@ -229,6 +254,13 @@ class service extends Controller
                         }
                         if ($this->db->insert($table, $input_data)) {
                             $data['success_message'] = true;
+                            
+                            $id = $this->db->id();
+
+                            if (isset($post_data['after_success'])) {
+                                $data['after_insert_response'] = $this->afterInsert($id, $post_data['after_success']);
+                            }
+
                         }
                     } else {
                         $input_data = $this->getInputData($post_data['data'], $json_data['fields']);
@@ -239,6 +271,10 @@ class service extends Controller
                             }
                             $data['id'] = $id;
                             $data['success_message'] = true;
+
+                            if (isset($post_data['after_success'])) {
+                                $data['after_insert_response'] = $this->afterInsert($id, $post_data['after_success']);
+                            }
                         }
                     }
                 }
