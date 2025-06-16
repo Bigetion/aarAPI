@@ -5,26 +5,37 @@
     "update": [1],
     "delete": [1]
   },
-  "fields": [{
-    "id": "title"
-  },{
-    "id": "titleSlug"
-  },{
-    "id": "content"
-  },{
-    "id": "description"
-  },{
-    "id": "categories"
-  },{
-    "id": "tags"
-  },{
-    "id": "draft"
-  },{
-    "id": "featuredImage"
-  },{
-    "id": "createdAt"
-  },{
-    "id": "updatedAt"
-  }],
+  "fields": [
+    {
+      "id": "title"
+    },
+    {
+      "id": "titleSlug"
+    },
+    {
+      "id": "content"
+    },
+    {
+      "id": "description"
+    },
+    {
+      "id": "categories"
+    },
+    {
+      "id": "tags"
+    },
+    {
+      "id": "draft"
+    },
+    {
+      "id": "featuredImage"
+    },
+    {
+      "id": "createdAt"
+    },
+    {
+      "id": "updatedAt"
+    }
+  ],
   "uniq_id": ["titleSlug"]
 }

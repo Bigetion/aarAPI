@@ -1,9 +1,11 @@
 {
-  "query": [{
-    "store": "tags",
-    "keys": ["_id", "name", "description"],
-    "join": {
-      "posts": ["name", "inarray", "tags"]
+  "query": [
+    {
+      "store": "tags",
+      "keys": ["_id", "name", "description"],
+      "join": {
+        "posts": ["name", "inarray", "tags"]
+      }
     }
-  }]
+  ]
 }

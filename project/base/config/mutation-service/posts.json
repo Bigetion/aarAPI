@@ -20,7 +20,27 @@
       "validation": ""
     },
     {
+      "id": "description",
+      "validation": ""
+    },
+    {
+      "id": "categories",
+      "validation": ""
+    },
+    {
+      "id": "tags",
+      "validation": ""
+    },
+    {
       "id": "image",
+      "validation": ""
+    },
+    {
+      "id": "created_at",
+      "validation": ""
+    },
+    {
+      "id": "updated_at",
       "validation": ""
     }
   ]

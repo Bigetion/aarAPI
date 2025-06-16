@@ -1,6 +1,8 @@
 {
-  "query": [{
-    "store": "content",
-    "keys": ["_id", "title", "titleSlug", "content", "featuredImage"]
-  }]
+  "query": [
+    {
+      "store": "content",
+      "keys": ["_id", "title", "titleSlug", "content", "featuredImage"]
+    }
+  ]
 }

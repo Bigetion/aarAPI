@@ -1,0 +1,6 @@
+{
+  "query": {
+    "table": "categories",
+    "column": ["id", "name", "description"]
+  }
+}

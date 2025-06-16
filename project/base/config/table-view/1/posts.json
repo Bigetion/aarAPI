@@ -1,0 +1,39 @@
+{
+  "title": "Posts",
+  "primary_key": "id",
+  "columns": [
+    {
+      "text": "Title",
+      "value": "title",
+      "sortable": true,
+      "align": "left"
+    },
+    {
+      "text": "Title Slug",
+      "value": "title_slug",
+      "sortable": true,
+      "align": "left"
+    },
+    {
+      "text": "Description",
+      "value": "description",
+      "sortable": true,
+      "align": "left"
+    }
+  ],
+  "query": {
+    "table": "posts",
+    "column": [
+      "id",
+      "title",
+      "title_slug",
+      "content",
+      "description",
+      "categories",
+      "tags",
+      "image",
+      "created_at",
+      "updated_at"
+    ]
+  }
+}

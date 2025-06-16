@@ -1,9 +1,11 @@
 {
-  "query": [{
-    "store": "posts",
-    "keys": [],
-    "join": {
-      "categories": ["categories", "having", "_id" ]
+  "query": [
+    {
+      "store": "posts",
+      "keys": [],
+      "join": {
+        "categories": ["categories", "having", "_id"]
+      }
     }
-  }]
+  ]
 }

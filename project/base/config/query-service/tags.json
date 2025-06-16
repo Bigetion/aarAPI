@@ -1,0 +1,6 @@
+{
+  "query": {
+    "table": "tags",
+    "column": ["id", "name", "description"]
+  }
+}

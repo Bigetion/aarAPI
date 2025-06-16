@@ -5,10 +5,13 @@
     "update": [1],
     "delete": [1]
   },
-  "fields": [{
-    "id": "name"
-  },{
-    "id": "description"
-  }],
+  "fields": [
+    {
+      "id": "name"
+    },
+    {
+      "id": "description"
+    }
+  ],
   "uniq_id": ["name"]
 }

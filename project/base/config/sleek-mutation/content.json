@@ -5,14 +5,19 @@
     "update": [1],
     "delete": [1]
   },
-  "fields": [{
-    "id": "title"
-  },{
-    "id": "titleSlug"
-  },{
-    "id": "content"
-  },{
-    "id": "featuredImage"
-  }],
+  "fields": [
+    {
+      "id": "title"
+    },
+    {
+      "id": "titleSlug"
+    },
+    {
+      "id": "content"
+    },
+    {
+      "id": "featuredImage"
+    }
+  ],
   "uniq_id": ["titleSlug"]
 }

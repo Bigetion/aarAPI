@@ -1,6 +1,8 @@
 {
-  "query": [{
-    "store": "pages",
-    "keys": ["_id", "title", "content"]
-  }]
+  "query": [
+    {
+      "store": "pages",
+      "keys": ["_id", "title", "content"]
+    }
+  ]
 }

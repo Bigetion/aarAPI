@@ -1,9 +1,11 @@
 {
-  "query": [{
-    "store": "categories",
-    "keys": ["_id", "name", "description"],
-    "join": {
-      "posts": ["_id", "inarray", "categories"]
+  "query": [
+    {
+      "store": "categories",
+      "keys": ["_id", "name", "description"],
+      "join": {
+        "posts": ["_id", "inarray", "categories"]
+      }
     }
-  }]
+  ]
 }

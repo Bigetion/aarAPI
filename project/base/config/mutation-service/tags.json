@@ -1,19 +1,19 @@
 {
-	"table": "tags",
-	"roles": {
-		"insert": [1],
-		"update": [1],
-		"delete": [1]
-	},
-	"primary_key": "id",
-	"fields": [
-		{
-			"id": "name",
-			"validation": ""
-		},
-		{
-			"id": "description",
-			"validation": ""
-		}
-	]
+  "table": "tags",
+  "roles": {
+    "insert": [1],
+    "update": [1],
+    "delete": [1]
+  },
+  "primary_key": "id",
+  "fields": [
+    {
+      "id": "name",
+      "validation": ""
+    },
+    {
+      "id": "description",
+      "validation": ""
+    }
+  ]
 }
