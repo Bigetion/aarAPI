@@ -1,0 +1,19 @@
+{
+  "table": "post_category",
+  "roles": {
+    "insert": [1],
+    "update": [1],
+    "delete": [1]
+  },
+  "primary_key": "",
+  "fields": [
+    {
+      "id": "post_id",
+      "validation": ""
+    },
+    {
+      "id": "category_id",
+      "validation": ""
+    }
+  ]
+}

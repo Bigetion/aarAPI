@@ -24,14 +24,6 @@
       "validation": ""
     },
     {
-      "id": "categories",
-      "validation": ""
-    },
-    {
-      "id": "tags",
-      "validation": ""
-    },
-    {
       "id": "image",
       "validation": ""
     }
