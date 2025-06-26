@@ -1,5 +1,5 @@
 {
-  "table": "contents",
+  "table": "posts",
   "roles": {
     "insert": [1],
     "update": [1],
