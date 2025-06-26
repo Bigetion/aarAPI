@@ -34,14 +34,6 @@
     {
       "id": "image",
       "validation": ""
-    },
-    {
-      "id": "created_at",
-      "validation": ""
-    },
-    {
-      "id": "updated_at",
-      "validation": ""
     }
   ]
 }
