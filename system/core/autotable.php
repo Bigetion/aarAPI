@@ -18,15 +18,16 @@ class Autotable
         }
 
         if (!in_array('roles', $table)) {
-
             if ($database_type === 'mysql') {
                 $db->exec("CREATE TABLE `roles` (
                     `id_role` int(10) NOT NULL AUTO_INCREMENT,
                     `role_name` varchar(50) NOT NULL,
                     `description` varchar(255) NOT NULL,
                     `permission` text,
+                    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                     PRIMARY KEY (`id_role`)
-                )");
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
             }
 
             $data_role['id_role'] = '1';
@@ -50,12 +51,13 @@ class Autotable
                     `name` varchar(255) NOT NULL,
                     `password` text NOT NULL,
                     `id_role` int(10) NOT NULL,
-                    `id_type` tinyint(1),
-                    `id_external` bigint(20),
+                    `id_type` tinyint DEFAULT NULL,
+                    `id_external` bigint UNSIGNED DEFAULT NULL,
                     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-                    PRIMARY KEY (`id_user`)
-                )");
+                    PRIMARY KEY (`id_user`),
+                    FOREIGN KEY (`id_role`) REFERENCES `roles`(`id_role`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
             }
 
             $data_user['id_user'] = '1';
@@ -79,10 +81,12 @@ class Autotable
                     `id_link` int(10) NOT NULL AUTO_INCREMENT,
                     `link` varchar(100) NOT NULL,
                     `short_link` varchar(50) NOT NULL,
+                    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                     PRIMARY KEY (`id_link`),
                     UNIQUE KEY `short_link` (`short_link`),
-                    UNIQUE KEY `link` (`link`),
-                )");
+                    UNIQUE KEY `link` (`link`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
             }
         }
     }
