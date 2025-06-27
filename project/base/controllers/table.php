@@ -35,6 +35,10 @@ class table extends Controller
             $response = $this->handleRawQuery($queryConfig, $json_data['total_rows_query'], $where);
         } else {
             $response = $this->handleStructuredQuery($queryConfig, $where);
+
+            if (isset($queryConfig['sub_query']) && is_array($queryConfig['sub_query'])) {
+                $response['data'] = $this->handleSubQueries($response['data'], $queryConfig['sub_query']);
+            }
         }
 
         $response['error'] = $this->db->error();
@@ -105,7 +109,6 @@ class table extends Controller
         unset($count_where['ORDER'], $count_where['LIMIT']);
 
         if (isset($where['GROUP'])) {
-            // Hitung manual total jika ada GROUP BY
             if ($join) {
                 $groupData = $this->db->select($table, $join, $column, $count_where);
             } else {
@@ -113,17 +116,46 @@ class table extends Controller
             }
             $response['total_rows'] = count($groupData);
         } else {
-            // Normal count
             $response['total_rows'] = $join
                 ? $this->db->count($table, $join, $column[0], $count_where)
                 : $this->db->count($table, $column[0], $count_where);
         }
 
-        // Ambil data
         $response['data'] = $join
             ? $this->db->select($table, $join, $column, $where)
             : $this->db->select($table, $column, $where);
 
         return $response;
+    }
+
+    private function handleSubQueries(array $mainData, array $subQueries): array
+    {
+        if (empty($mainData)) return $mainData;
+
+        $mainIds = array_column($mainData, 'id');
+        $indexed = [];
+
+        foreach ($subQueries as $sub) {
+            if (!isset($sub['key'], $sub['table'], $sub['foreign_key'], $sub['target_key'], $sub['column'])) {
+                continue;
+            }
+
+            $where = [$sub['foreign_key'] => $mainIds];
+            $subData = isset($sub['join'])
+                ? $this->db->select($sub['table'], $sub['join'], $sub['column'], $where)
+                : $this->db->select($sub['table'], $sub['column'], $where);
+
+            $grouped = [];
+            foreach ($subData as $item) {
+                $grouped[$item[$sub['foreign_key']]][] = $item;
+            }
+
+            foreach ($mainData as &$row) {
+                $id = $row[$sub['target_key']] ?? null;
+                $row[$sub['key']] = $grouped[$id] ?? [];
+            }
+        }
+
+        return $mainData;
     }
 }

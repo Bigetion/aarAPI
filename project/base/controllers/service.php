@@ -112,7 +112,13 @@ class service extends Controller
             return $this->getDataByJson($query, $where);
         }
 
-        return $this->getDataByJson($query, $where);
+        $data = $this->getDataByJson($query, $where);
+
+        if (isset($query['sub_query'])) {
+            $data = $this->handleSubQuery($data, $query['sub_query']);
+        }
+
+        return $data;
     }
 
     private function getDataByJson($query, $where)
@@ -126,18 +132,9 @@ class service extends Controller
         $column = $query['column'];
 
         if (isset($query['join'])) {
-            $join = $query['join'];
-            $type = $query['type'] ?? 'select';
-
-            return ($type === 'sum')
-                ? $this->db->sum($table, $join, $column, $where)
-                : $this->db->select($table, $join, $column, $where);
+            return $this->db->select($table, $query['join'], $column, $where);
         } else {
-            $type = $query['type'] ?? 'select';
-
-            return ($type === 'sum')
-                ? $this->db->sum($table, $column, $where)
-                : $this->db->select($table, $column, $where);
+            return $this->db->select($table, $column, $where);
         }
     }
 
@@ -155,6 +152,36 @@ class service extends Controller
 
         return $query;
     }
+
+    private function handleSubQuery($mainData, $subQueries)
+    {
+        foreach ($subQueries as $sub) {
+            $target_key = $sub['target_key'];
+            $foreign_key = $sub['foreign_key'];
+            $main_ids = array_column($mainData, $target_key);
+
+            $where = [$foreign_key => $main_ids];
+
+            $columns = $sub['column'];
+
+            $join = isset($sub['join']) ? $sub['join'] : null;
+            $rows = $join
+                ? $this->db->select($sub['table'], $join, $columns, ["AND" => $where])
+                : $this->db->select($sub['table'], $columns, ["AND" => $where]);
+
+            $grouped = [];
+            foreach ($rows as $row) {
+                $grouped[$row[$foreign_key]][] = $row;
+            }
+
+            foreach ($mainData as &$item) {
+                $item[$sub['key']] = isset($grouped[$item[$target_key]]) ? $grouped[$item[$target_key]] : [];
+            }
+        }
+
+        return $mainData;
+    }
+
 
     // ================================
     // MUTATION SECTION
