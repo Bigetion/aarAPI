@@ -260,12 +260,14 @@ class service extends Controller
         } else {
             $input_data = $this->getInputData($post_data['data'], $fields);
             if ($this->db->insert($table, $input_data)) {
-                $id = $this->uuid ?: $this->db->id();
+                $id = $this->db->id();
                 $data['id'] = $id;
                 $data['success_message'] = true;
                 if (isset($post_data['after_success'])) {
                     $data['after_insert_response'] = $this->afterSuccess($id, $post_data['after_success']);
                 }
+            } else {
+                $data['error_message'] = $this->db->error();
             }
         }
 
@@ -288,7 +290,7 @@ class service extends Controller
                 $data['after_insert_response'] = $this->afterSuccess('-1', $post_data['after_success']);
             }
         } else {
-            $data['error_message'] = true;
+            $data['error_message'] = $this->db->error();
         }
 
         $data['log'] = $this->db->log();
@@ -307,7 +309,7 @@ class service extends Controller
                 $data['after_insert_response'] = $this->afterSuccess('-1', $post_data['after_success']);
             }
         } else {
-            $data['error_message'] = true;
+            $data['error_message'] = $this->db->error();
         }
 
         $data['log'] = $this->db->log();
