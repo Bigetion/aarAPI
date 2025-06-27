@@ -1,206 +1,333 @@
-<?php if (!defined('INDEX')) {
-    exit('No direct script access allowed');
-}
+<?php if (!defined('INDEX')) exit('No direct script access allowed');
 
 class service extends Controller
 {
-
     public $uuid = false;
 
-    public function getQueryServiceOptions()
+    // ================================
+    // GET DATA SECTION
+    // ================================
+
+    public function getData()
     {
         $post_data = $this->render->json_post();
-        $name = $post_data['name'];
-
-        if (file_exists('project/base/config/query-service/' . id_role . '/' . $name . '.json')) {
-            $data = json_decode(file_get_contents('project/base/config/query-service/' . id_role . '/' . $name . '.json'), true);
-        } else if (file_exists('project/base/config/query-service/' . $name . '.json')) {
-            $data = json_decode(file_get_contents('project/base/config/query-service/' . $name . '.json'), true);
-        }
+        $data = $this->getDataResult($post_data);
         $this->render->json($data);
     }
 
-    private function getInputData($my_data, $my_fields)
+    private function getDataResult($post_data)
     {
-        $input_data = array();
-        foreach ($my_fields as $field) {
-            if (isset($my_data[$field['id']])) {
-                $input_data[$field['id']] = $my_data[$field['id']];
-                if (isset($field['type'])) {
-                    if ($field['type'] == 'password') {
-                        $input_data[$field['id']] = password_hash($input_data[$field['id']], 1);
-                    }
-                    if ($field['type'] == 'uuid') {
-                        $this->uuid = md5(uniqid());
-                        $input_data[$field['id']] = $this->uuid;
-                    }
+        $name = $post_data['name'];
+        $json_data = $this->loadQueryConfig($name);
+
+        if (!$json_data || !isset($json_data['query'])) {
+            return [
+                'data' => [],
+                'error' => 'Query config not found or malformed.'
+            ];
+        }
+
+        if (is_array($json_data['query']) && isset($json_data['query'][0])) {
+            return $this->handleQueryArray($json_data, $post_data);
+        }
+
+        return $this->handleQuerySingle($json_data, $post_data);
+    }
+
+    private function loadQueryConfig($name)
+    {
+        $paths = [
+            'project/base/config/query-service/' . id_role . '/' . $name . '.json',
+            'project/base/config/query-service/' . $name . '.json',
+        ];
+
+        foreach ($paths as $path) {
+            if (file_exists($path)) {
+                $json = json_decode(file_get_contents($path), true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    return $json;
                 }
             }
         }
-        return $input_data;
+
+        return false;
+    }
+
+    private function handleQueryArray($json_data, $post_data)
+    {
+        $result = ['data' => [], 'error' => [], 'log' => []];
+
+        foreach ($json_data['query'] as $key => $query) {
+            $where = $this->getWhereForKey($post_data, $key, $query);
+            $data = $this->processQuery($query, $where, $json_data);
+
+            $result['data'][] = $data;
+            $result['error'][$key] = $this->db->error();
+        }
+
+        $result['log'] = $this->db->log();
+        return $result;
+    }
+
+    private function handleQuerySingle($json_data, $post_data)
+    {
+        $query = $json_data['query'];
+        $where = isset($post_data['where']) ? $post_data['where'] : [];
+
+        if (isset($json_data['default_order']) && !isset($where["ORDER"])) {
+            $where["ORDER"] = $json_data['default_order'];
+        }
+
+        $data = $this->processQuery($query, $where, $json_data);
+
+        return [
+            'data' => $data ?: [],
+            'error' => $this->db->error(),
+            'log' => $this->db->log(),
+        ];
+    }
+
+    private function getWhereForKey($post_data, $key, $query)
+    {
+        $where = [];
+
+        if (isset($post_data['where'][$key])) {
+            $where = $post_data['where'][$key];
+
+            if (is_array($where) && isset($query['default_order']) && !isset($where["ORDER"])) {
+                $where["ORDER"] = $query['default_order'];
+            }
+        }
+
+        return $where;
+    }
+
+    private function processQuery($query, $where, $json_data)
+    {
+        if (is_string($query)) {
+            if (is_array($where)) {
+                $query = $this->replaceQueryStringVariable($query, $where, $json_data);
+                $where = "";
+            }
+            return $this->getDataByJson($query, $where);
+        }
+
+        return $this->getDataByJson($query, $where);
     }
 
     private function getDataByJson($query, $where)
     {
         if (is_string($query)) {
             $data = $this->db->query($query . " " . $where);
-            if ($data) {
-                $data = $data->fetchAll(PDO::FETCH_ASSOC);
-            }
-
-        } else {
-            $table = $query['table'];
-            $column = $query['column'];
-
-            if (isset($query['join'])) {
-                $join = $query['join'];
-                if (isset($query['type'])) {
-                    $type = $query['type'];
-                    switch ($type) {
-                        case 'sum':
-                            $data = $this->db->sum($table, $join, $column, $where);
-                            break;
-                        default:
-                            $data = $this->db->select($table, $join, $column, $where);
-                    }
-                } else {
-                    $data = $this->db->select($table, $join, $column, $where);
-                }
-            } else {
-                if (isset($query['type'])) {
-                    $type = $query['type'];
-                    switch ($type) {
-                        case 'sum':
-                            $data = $this->db->sum($table, $column, $where);
-                            break;
-                        default:
-                            $data = $this->db->select($table, $column, $where);
-                    }
-                } else {
-                    $data = $this->db->select($table, $column, $where);
-                }
-            }
+            return $data ? $data->fetchAll(PDO::FETCH_ASSOC) : [];
         }
-        return $data;
+
+        $table = $query['table'];
+        $column = $query['column'];
+
+        if (isset($query['join'])) {
+            $join = $query['join'];
+            $type = $query['type'] ?? 'select';
+
+            return ($type === 'sum')
+                ? $this->db->sum($table, $join, $column, $where)
+                : $this->db->select($table, $join, $column, $where);
+        } else {
+            $type = $query['type'] ?? 'select';
+
+            return ($type === 'sum')
+                ? $this->db->sum($table, $column, $where)
+                : $this->db->select($table, $column, $where);
+        }
     }
 
     private function replaceQueryStringVariable($query, $where, $json_data)
     {
-        $new_query = $query;
-        foreach ($json_data as $jk => $jv) {
-            if ($jk != "query") {
-                if (array_key_exists($jk, $where)) {
-                    $new_query = str_replace('$' . $jk, $jv[0], $new_query);
-                } else {
-                    $new_query = str_replace('$' . $jk, $jv[1], $new_query);
-                }
+        foreach ($json_data as $key => $value) {
+            if ($key !== "query") {
+                $query = str_replace('$' . $key, isset($where[$key]) ? $value[0] : $value[1], $query);
             }
         }
 
-        $where_key = array();
-        $where_value = array();
-        foreach ($where as $wk => $wv) {
-            $where_key[] = '$' . $wk;
-            $where_value[] = $wv;
+        foreach ($where as $key => $value) {
+            $query = str_replace('$' . $key, $value, $query);
         }
-        return str_replace($where_key, $where_value, $new_query);
+
+        return $query;
     }
 
-    private function getDataResult($post_data)
+    // ================================
+    // MUTATION SECTION
+    // ================================
+
+    public function executeMutation()
+    {
+        $post_data = $this->render->json_post();
+        $data = $this->runMutation($post_data);
+        if (empty($data)) {
+            $data = ["error_message" => true];
+        }
+        $this->render->json($data);
+    }
+
+    private function runMutation($post_data)
     {
         $name = $post_data['name'];
-        $json_data = false;
+        $type = $post_data['type'];
 
-        if (file_exists('project/base/config/query-service/' . id_role . '/' . $name . '.json')) {
-            $json_data = json_decode(file_get_contents('project/base/config/query-service/' . id_role . '/' . $name . '.json'), true);
-        } else if (file_exists('project/base/config/query-service/' . $name . '.json')) {
-            $json_data = json_decode(file_get_contents('project/base/config/query-service/' . $name . '.json'), true);
+        $json_data = $this->loadMutationConfig($name);
+        if (!$json_data) return ["error" => "Mutation config not found"];
+
+        if (!$this->checkMutationPermission($type, $json_data)) {
+            return ["error" => "Permission denied"];
         }
 
-        $data['data'] = array();
-
-        if ($json_data) {
-            if (is_array($json_data['query'])) {
-                $array_keys = array_keys($json_data['query']);
-                if ($array_keys[0] === 0) {
-                    $query = $json_data['query'];
-                    foreach ($query as $key => $q) {
-                        if (is_string($q)) {
-                            $where = "";
-                            if (isset($post_data['where'])) {
-                                $where = $post_data['where'][$key];
-                                if (is_array($where)) {
-                                    $q = $this->replaceQueryStringVariable($q, $where, $json_data);
-                                    $where = "";
-                                }
-                            }
-                            $data['data'][] = $this->getDataByJson($q, $where);
-                        } else {
-                            $where = array();
-                            if (isset($post_data['where'])) {
-                                if (isset($post_data['where'][$key])) {
-                                    $where = $post_data['where'][$key];
-                                    if (isset($q['default_order']) && !isset($where["ORDER"])) {
-                                        $where["ORDER"] = $q['default_order'];
-                                    }
-                                }
-                            }
-                            $data['data'][] = $this->getDataByJson($q, $where);
-                        }
-                        $data['error'][$key] = $this->db->error();
-                    }
-                } else {
-                    $where = array();
-                    if (isset($post_data['where'])) {
-                        $where = $post_data['where'];
-                    }
-                    if (isset($json_data['default_order']) && !isset($where["ORDER"])) {
-                        $where["ORDER"] = $json_data['default_order'];
-                    }
-                    $data['data'] = $this->getDataByJson($json_data['query'], $where);
-                }
-            } else {
-                $q = $json_data['query'];
-                $where = "";
-                if (isset($post_data['where'])) {
-                    $where = $post_data['where'];
-                    if (is_array($where)) {
-                        $q = $this->replaceQueryStringVariable($q, $where, $json_data);
-                        $where = "";
-                    }
-                }
-                $data['data'] = $this->getDataByJson($q, $where);
-                $data['error'] = $this->db->error();
-            }
-            if ($data['data'] === false) {
-                $data['data'] = array();
-            }
-            $data['log'] = $this->db->log();
+        switch ($type) {
+            case 'insert':
+                return $this->handleInsertMutation($post_data, $json_data);
+            case 'update':
+                return $this->handleUpdateMutation($post_data, $json_data);
+            case 'delete':
+                return $this->handleDeleteMutation($post_data, $json_data);
+            default:
+                return ["error" => "Unsupported mutation type"];
         }
+    }
+
+    private function loadMutationConfig($name)
+    {
+        $file = 'project/base/config/mutation-service/' . $name . '.json';
+        if (file_exists($file)) {
+            $json = json_decode(file_get_contents($file), true);
+            return (json_last_error() === JSON_ERROR_NONE) ? $json : false;
+        }
+        return false;
+    }
+
+    private function checkMutationPermission($type, $json_data)
+    {
+        return isset($json_data['roles'][$type]) && in_array(id_role, $json_data['roles'][$type]);
+    }
+
+    private function handleInsertMutation($post_data, $json_data)
+    {
+        $table = $json_data['table'];
+        $fields = $json_data['fields'];
+        $data = [];
+
+        $array_keys = array_keys($post_data['data']);
+        $multi_insert = isset($array_keys[0]) && is_numeric($array_keys[0]);
+
+        if ($multi_insert) {
+            $input_data = array_map(function ($item) use ($fields) {
+                return $this->getInputData($item, $fields);
+            }, $post_data['data']);
+
+            if ($this->db->insert($table, $input_data)) {
+                $data['success_message'] = true;
+                $id = $this->db->id();
+                if (isset($post_data['after_success'])) {
+                    $data['after_insert_response'] = $this->afterSuccess($id, $post_data['after_success']);
+                }
+            }
+        } else {
+            $input_data = $this->getInputData($post_data['data'], $fields);
+            if ($this->db->insert($table, $input_data)) {
+                $id = $this->uuid ?: $this->db->id();
+                $data['id'] = $id;
+                $data['success_message'] = true;
+                if (isset($post_data['after_success'])) {
+                    $data['after_insert_response'] = $this->afterSuccess($id, $post_data['after_success']);
+                }
+            }
+        }
+
+        $data['log'] = $this->db->log();
         return $data;
     }
 
-    public function getData()
+    private function handleUpdateMutation($post_data, $json_data)
     {
-        $post_data = $this->render->json_post();
-        $data = array();
-        $data = $this->getDataResult($post_data);
-        $this->render->json($data);
-    }
+        $table = $json_data['table'];
+        $fields = $json_data['fields'];
 
-    public function getDataArray()
-    {
-        $post_data = $this->render->json_post();
-        $queries = $post_data['queries'];
-        $data = array();
-        foreach ($queries as $key => $query) {
-            $data[] = $this->getDataResult($query);
-            $data[$key]['log'] = $data[$key]['log'][$key];
+        $where = $post_data['where'] ?? [$json_data['primary_key'] => $post_data['id']];
+        $input_data = $this->getInputData($post_data['data'], $fields);
+
+        $data = [];
+        if ($this->db->update($table, $input_data, $where)) {
+            $data['success_message'] = true;
+            if (isset($post_data['after_success'])) {
+                $data['after_insert_response'] = $this->afterSuccess('-1', $post_data['after_success']);
+            }
+        } else {
+            $data['error_message'] = true;
         }
-        $this->render->json($data);
+
+        $data['log'] = $this->db->log();
+        return $data;
     }
 
-    private function replaceInsertedId($data, $id) {
+    private function handleDeleteMutation($post_data, $json_data)
+    {
+        $table = $json_data['table'];
+        $where = $post_data['where'] ?? [$json_data['primary_key'] => $post_data['id']];
+        $data = [];
+
+        if ($this->db->delete($table, $where)) {
+            $data['success_message'] = true;
+            if (isset($post_data['after_success'])) {
+                $data['after_insert_response'] = $this->afterSuccess('-1', $post_data['after_success']);
+            }
+        } else {
+            $data['error_message'] = true;
+        }
+
+        $data['log'] = $this->db->log();
+        return $data;
+    }
+
+    private function getInputData($my_data, $my_fields)
+    {
+        $input_data = array();
+
+        foreach ($my_fields as $field) {
+            $id = $field['id'];
+            $value = isset($my_data[$id]) ? $my_data[$id] : null;
+
+            if (!isset($field['required']) || $field['required'] !== true || $value !== null) {
+                $input_data[$id] = $value;
+
+                if (isset($field['type'])) {
+                    switch ($field['type']) {
+                        case 'password':
+                            $input_data[$id] = password_hash($value, PASSWORD_BCRYPT);
+                            break;
+                        case 'uuid':
+                            $this->uuid = md5(uniqid());
+                            $input_data[$id] = $this->uuid;
+                            break;
+                    }
+                }
+            }
+        }
+
+        return $input_data;
+    }
+
+    private function afterSuccess($id, $post_data)
+    {
+        if (isset($post_data[0])) {
+            return array_map(function ($item) use ($id) {
+                return $this->runMutation($this->replaceInsertedId($item, $id));
+            }, $post_data);
+        }
+
+        return $this->runMutation($this->replaceInsertedId($post_data, $id));
+    }
+
+    private function replaceInsertedId($data, $id)
+    {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $data[$key] = $this->replaceInsertedId($value, $id);
@@ -209,126 +336,5 @@ class service extends Controller
             }
         }
         return $data;
-    }
-
-    private function afterSuccess($id, $post_data) {
-        if (isset($post_data[0])) {
-            $responses = [];
-            foreach ($post_data as $item) {
-                $replaced = $this->replaceInsertedId($item, $id);
-                $responses[] = $this->getExecuteMutationResult($replaced);
-            }
-            return $responses;
-        } else {
-            $post_data = $this->replaceInsertedId($post_data, $id);
-            return $this->getExecuteMutationResult($post_data);
-        }
-    }
-    
-    private function getExecuteMutationResult($post_data)
-    {
-        $name = $post_data['name'];
-        $type = $post_data['type'];
-
-        $json_data = json_decode(file_get_contents('project/base/config/mutation-service/' . $name . '.json'), true);
-
-        $table = $json_data['table'];
-        $primary_key = $json_data['primary_key'];
-        $data = array();
-
-        $this->uuid = false;
-        $where = [$primary_key => '-1'];
-        if (isset($post_data['id'])) {
-            $where = [$primary_key => $post_data['id']];
-        } else if (isset($post_data['where'])) {
-            $where = $post_data['where'];
-        }
-        if ($type == 'insert') {
-            if (in_array(id_role, $json_data['roles']['insert'])) {
-                if (is_array($post_data['data'])) {
-                    $array_keys = array_keys($post_data['data']);
-                    if ($array_keys[0] === 0) {
-                        $input_data = array();
-                        foreach ($array_keys as $key) {
-                            $input_data[] = $this->getInputData($post_data['data'][$key], $json_data['fields']);
-                        }
-                        if ($this->db->insert($table, $input_data)) {
-                            $data['success_message'] = true;
-                            
-                            $id = $this->db->id();
-
-                            if (isset($post_data['after_success'])) {
-                                $data['after_insert_response'] = $this->afterSuccess($id, $post_data['after_success']);
-                            }
-
-                        }
-                    } else {
-                        $input_data = $this->getInputData($post_data['data'], $json_data['fields']);
-                        if ($this->db->insert($table, $input_data)) {
-                            $id = $this->db->id();
-                            if ($this->uuid) {
-                                $id = $this->uuid;
-                            }
-                            $data['id'] = $id;
-                            $data['success_message'] = true;
-
-                            if (isset($post_data['after_success'])) {
-                                $data['after_insert_response'] = $this->afterSuccess($id, $post_data['after_success']);
-                            }
-                        }
-                    }
-                }
-            }
-        } elseif ($type == 'update') {
-            $input_data = $this->getInputData($post_data['data'], $json_data['fields']);
-            if (in_array(id_role, $json_data['roles']['update'])) {
-                if ($this->db->update($table, $input_data, $where)) {
-                    $data['success_message'] = true;
-
-                    if (isset($post_data['after_success'])) {
-                        $data['after_insert_response'] = $this->afterSuccess("-1", $post_data['after_success']);
-                    }
-                }
-            }
-        } elseif ($type == 'delete') {
-            if (in_array(id_role, $json_data['roles']['delete'])) {
-                if ($this->db->delete($table, $where)) {
-                    $data['success_message'] = true;
-
-                    if (isset($post_data['after_success'])) {
-                        $data['after_insert_response'] = $this->afterSuccess("-1", $post_data['after_success']);
-                    }
-                }
-            }
-        }
-        if (!isset($data['success_message'])) {
-            $data['error'] = $this->db->error();
-            $data['error_message'] = true;
-        }
-        $data['log'] = $this->db->log();
-        return $data;
-    }
-
-    public function executeMutation()
-    {
-        $post_data = $this->render->json_post();
-        $data = array();
-        $data = $this->getExecuteMutationResult($post_data);
-        if (count($data) === 0) {
-            $data = array("error_message" => true);
-        }
-        $this->render->json($data);
-    }
-
-    public function executeMutationArray()
-    {
-        $post_data = $this->render->json_post();
-        $mutations = $post_data['mutations'];
-        $data = array();
-        foreach ($mutations as $key => $mutation) {
-            $data[] = $this->getExecuteMutationResult($mutation);
-            $data[$key]['log'] = $data[$key]['log'][$key];
-        }
-        $this->render->json($data);
     }
 }
