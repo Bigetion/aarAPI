@@ -29,8 +29,6 @@
       "title_slug",
       "content",
       "description",
-      "categories",
-      "tags",
       "image",
       "created_at",
       "updated_at"

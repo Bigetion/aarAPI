@@ -27,8 +27,10 @@ class Autotable
                     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                     PRIMARY KEY (`id_role`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
             }
+
+            
 
             $data_role['id_role'] = '1';
             $data_role['role_name'] = 'Administrator';
@@ -57,7 +59,7 @@ class Autotable
                     `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
                     PRIMARY KEY (`id_user`),
                     FOREIGN KEY (`id_role`) REFERENCES `roles`(`id_role`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
             }
 
             $data_user['id_user'] = '1';
@@ -86,7 +88,7 @@ class Autotable
                     PRIMARY KEY (`id_link`),
                     UNIQUE KEY `short_link` (`short_link`),
                     UNIQUE KEY `link` (`link`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
             }
         }
     }
