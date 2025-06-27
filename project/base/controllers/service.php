@@ -211,7 +211,7 @@ class service extends Controller
         return $data;
     }
 
-    private function afterInsert($id, $post_data) {
+    private function afterSuccess($id, $post_data) {
         if (isset($post_data[0])) {
             $responses = [];
             foreach ($post_data as $item) {
@@ -258,7 +258,7 @@ class service extends Controller
                             $id = $this->db->id();
 
                             if (isset($post_data['after_success'])) {
-                                $data['after_insert_response'] = $this->afterInsert($id, $post_data['after_success']);
+                                $data['after_insert_response'] = $this->afterSuccess($id, $post_data['after_success']);
                             }
 
                         }
@@ -273,7 +273,7 @@ class service extends Controller
                             $data['success_message'] = true;
 
                             if (isset($post_data['after_success'])) {
-                                $data['after_insert_response'] = $this->afterInsert($id, $post_data['after_success']);
+                                $data['after_insert_response'] = $this->afterSuccess($id, $post_data['after_success']);
                             }
                         }
                     }
@@ -284,12 +284,20 @@ class service extends Controller
             if (in_array(id_role, $json_data['roles']['update'])) {
                 if ($this->db->update($table, $input_data, $where)) {
                     $data['success_message'] = true;
+
+                    if (isset($post_data['after_success'])) {
+                        $data['after_insert_response'] = $this->afterSuccess("-1", $post_data['after_success']);
+                    }
                 }
             }
         } elseif ($type == 'delete') {
             if (in_array(id_role, $json_data['roles']['delete'])) {
                 if ($this->db->delete($table, $where)) {
                     $data['success_message'] = true;
+
+                    if (isset($post_data['after_success'])) {
+                        $data['after_insert_response'] = $this->afterSuccess("-1", $post_data['after_success']);
+                    }
                 }
             }
         }
