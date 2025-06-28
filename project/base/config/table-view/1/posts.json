@@ -47,6 +47,20 @@
         "join": {
           "[>]categories": { "post_category.category_id": "id" }
         }
+      },
+      {
+        "key": "tags",
+        "table": "post_tag",
+        "foreign_key": "post_id",
+        "target_key": "id",
+        "column": [
+          "post_tag.post_id",
+          "post_tag.tag_id",
+          "tags.name"
+        ],
+        "join": {
+          "[>]tags": { "post_tag.tag_id": "id" }
+        }
       }
     ]
   }
