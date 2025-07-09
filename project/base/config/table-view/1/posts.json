@@ -29,11 +29,35 @@
       "title_slug",
       "content",
       "description",
-      "categories",
-      "tags",
       "image",
       "created_at",
       "updated_at"
+    ],
+    "sub_query": [
+      {
+        "key": "categories",
+        "table": "post_category",
+        "foreign_key": "post_id",
+        "target_key": "id",
+        "column": [
+          "post_category.post_id",
+          "post_category.category_id(id)",
+          "categories.name"
+        ],
+        "join": {
+          "[>]categories": { "post_category.category_id": "id" }
+        }
+      },
+      {
+        "key": "tags",
+        "table": "post_tag",
+        "foreign_key": "post_id",
+        "target_key": "id",
+        "column": ["post_tag.post_id", "post_tag.tag_id(id)", "tags.name"],
+        "join": {
+          "[>]tags": { "post_tag.tag_id": "id" }
+        }
+      }
     ]
   }
 }

@@ -3,7 +3,7 @@
   "primary_key": "id",
   "columns": [
     {
-      "text": "Name",
+      "text": "Tag",
       "value": "name",
       "sortable": true,
       "align": "left"

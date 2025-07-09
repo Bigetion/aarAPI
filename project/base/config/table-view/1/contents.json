@@ -17,6 +17,6 @@
   ],
   "query": {
     "table": "contents",
-    "column": ["id", "title", "title_slug", "content", "image"]
+    "column": ["id", "title", "title_slug", "content", "description", "image"]
   }
 }

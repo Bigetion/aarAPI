@@ -1,9 +1,0 @@
-{
-  "track_by": "id_role",
-  "label": "role_name",
-  "value": "id_role",
-  "query": {
-    "table": "roles",
-    "column": ["roles.id_role", "roles.role_name"]
-  }
-}
