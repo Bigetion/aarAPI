@@ -20,6 +20,10 @@
       "validation": ""
     },
     {
+      "id": "description",
+      "validation": ""
+    },
+    {
       "id": "image",
       "validation": ""
     }
