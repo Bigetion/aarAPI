@@ -17,6 +17,15 @@
   ],
   "query": {
     "table": "tags",
-    "column": ["id", "name", "description"]
+    "column": ["id", "name", "description"],
+    "sub_query": [
+      {
+        "key": "posts",
+        "table": "post_tag",
+        "column": ["post_id", "tag_id"],
+        "target_key": "id",
+        "foreign_key": "tag_id"
+      }
+    ]
   }
 }
