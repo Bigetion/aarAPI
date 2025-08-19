@@ -30,15 +30,14 @@
       "content",
       "description",
       "image",
+      "created_by",
       "created_at",
       "updated_at"
     ],
     "sub_query": [
       {
-        "key": "categories",
+        "column_id": "categories",
         "table": "post_category",
-        "foreign_key": "post_id",
-        "target_key": "id",
         "column": [
           "post_category.post_id",
           "post_category.category_id(id)",
@@ -46,17 +45,26 @@
         ],
         "join": {
           "[>]categories": { "post_category.category_id": "id" }
-        }
+        },
+        "foreign_key": "post_id",
+        "reference_column": "id"
       },
       {
-        "key": "tags",
+        "column_id": "tags",
         "table": "post_tag",
-        "foreign_key": "post_id",
-        "target_key": "id",
         "column": ["post_tag.post_id", "post_tag.tag_id(id)", "tags.name"],
         "join": {
           "[>]tags": { "post_tag.tag_id": "id" }
-        }
+        },
+        "foreign_key": "post_id",
+        "reference_column": "id"
+      },
+      {
+        "column_id": "author",
+        "table": "users",
+        "column": ["users.id_user", "users.name"],
+        "foreign_key": "id_user",
+        "reference_column": "created_by"
       }
     ]
   }

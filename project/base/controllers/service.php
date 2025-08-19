@@ -115,7 +115,7 @@ class service extends Controller
         $data = $this->getDataByJson($query, $where);
 
         if (isset($query['sub_query'])) {
-            $data = $this->handleSubQuery($data, $query['sub_query']);
+            $data = $this->handleSubQueries($data, $query['sub_query']);
         }
 
         return $data;
@@ -153,14 +153,14 @@ class service extends Controller
         return $query;
     }
 
-    private function handleSubQuery($mainData, $subQueries)
+    private function handleSubQueries($mainData, $subQueries)
     {
         foreach ($subQueries as $sub) {
-            $target_key = $sub['target_key'];
+            $reference_column = $sub['reference_column'];
             $foreign_key = $sub['foreign_key'];
-            $main_ids = array_column($mainData, $target_key);
+            $reference_ids = array_column($mainData, $reference_column);
 
-            $where = [$foreign_key => $main_ids];
+            $where = [$foreign_key => $reference_ids];
 
             $columns = $sub['column'];
 
@@ -175,7 +175,7 @@ class service extends Controller
             }
 
             foreach ($mainData as &$item) {
-                $item[$sub['key']] = isset($grouped[$item[$target_key]]) ? $grouped[$item[$target_key]] : [];
+                $item[$sub['column_id']] = isset($grouped[$item[$reference_column]]) ? $grouped[$item[$reference_column]] : [];
             }
         }
 

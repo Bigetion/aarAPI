@@ -20,11 +20,11 @@
     "column": ["id", "name", "description"],
     "sub_query": [
       {
-        "key": "posts",
+        "column_id": "posts",
         "table": "post_tag",
         "column": ["post_id", "tag_id"],
-        "target_key": "id",
-        "foreign_key": "tag_id"
+        "foreign_key": "tag_id",
+        "reference_column": "id"
       }
     ]
   }

@@ -128,31 +128,29 @@ class table extends Controller
         return $response;
     }
 
-    private function handleSubQueries(array $mainData, array $subQueries): array
+    private function handleSubQueries($mainData, $subQueries)
     {
-        if (empty($mainData)) return $mainData;
-
-        $mainIds = array_column($mainData, 'id');
-        $indexed = [];
-
         foreach ($subQueries as $sub) {
-            if (!isset($sub['key'], $sub['table'], $sub['foreign_key'], $sub['target_key'], $sub['column'])) {
-                continue;
-            }
+            $reference_column = $sub['reference_column'];
+            $foreign_key = $sub['foreign_key'];
+            $reference_ids = array_column($mainData, $reference_column);
 
-            $where = [$sub['foreign_key'] => $mainIds];
-            $subData = isset($sub['join'])
-                ? $this->db->select($sub['table'], $sub['join'], $sub['column'], $where)
-                : $this->db->select($sub['table'], $sub['column'], $where);
+            $where = [$foreign_key => $reference_ids];
+
+            $columns = $sub['column'];
+
+            $join = isset($sub['join']) ? $sub['join'] : null;
+            $rows = $join
+                ? $this->db->select($sub['table'], $join, $columns, ["AND" => $where])
+                : $this->db->select($sub['table'], $columns, ["AND" => $where]);
 
             $grouped = [];
-            foreach ($subData as $item) {
-                $grouped[$item[$sub['foreign_key']]][] = $item;
+            foreach ($rows as $row) {
+                $grouped[$row[$foreign_key]][] = $row;
             }
 
-            foreach ($mainData as &$row) {
-                $id = $row[$sub['target_key']] ?? null;
-                $row[$sub['key']] = $grouped[$id] ?? [];
+            foreach ($mainData as &$item) {
+                $item[$sub['column_id']] = isset($grouped[$item[$reference_column]]) ? $grouped[$item[$reference_column]] : [];
             }
         }
 
